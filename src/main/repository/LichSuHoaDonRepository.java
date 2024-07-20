@@ -34,7 +34,7 @@ public class LichSuHoaDonRepository {
                                 .id(rs.getInt(1))
                                 .maNV(rs.getString(2))
                                 .ngayCapNhap(rs.getString(3))
-                                .trangThai(rs.getString(4))
+                                .trangThai(rs.getInt(4))
                                 .build();
                 lists.add(response);
             }

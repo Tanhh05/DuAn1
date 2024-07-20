@@ -21,9 +21,19 @@ import lombok.ToString;
 @ToString
 @Builder
 public class HoaDon {
+    private Integer id;
+    
+    private Integer khachHangID;
+
+    private Integer nhanVienID;
+    
     private String maHoaDon;
+    
     private String tongTien;
+    
     private String trangThai;
+    
     private Date ngayTao;
+    
     private Date ngayCapNhap;
 }

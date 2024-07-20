@@ -18,11 +18,10 @@ import main.response.HoaDonResponse;
  */
 public class HoaDonChiTietRepository {
     public ArrayList<HoaDonChiTietReponse> getAll() {
-        String sql = "SELECT  dbo.HoaDonChiTiet.id, dbo.SanPhamChiTiet.ma_san_pham_chi_tiet, dbo.SanPhamChiTiet.ten_san_pham, dbo.SanPhamChiTiet.so_luong_ton, dbo.HoaDon.tong_tien\n" +
+        String sql = "SELECT  dbo.SanPhamChiTiet.id, dbo.SanPhamChiTiet.ma_san_pham_chi_tiet, dbo.SanPhamChiTiet.ten_san_pham, dbo.HoaDonChiTiet.so_luong, dbo.HoaDon.tong_tien\n" +
 "FROM      dbo.SanPhamChiTiet INNER JOIN\n" +
-"                 dbo.SanPham ON dbo.SanPhamChiTiet.id_san_pham = dbo.SanPham.id INNER JOIN\n" +
 "                 dbo.HoaDonChiTiet ON dbo.SanPhamChiTiet.id = dbo.HoaDonChiTiet.id_san_pham_chi_tiet INNER JOIN\n" +
-"                 dbo.HoaDon ON dbo.SanPham.id = dbo.HoaDon.id_san_pham AND dbo.HoaDonChiTiet.id_hoa_don = dbo.HoaDon.id";
+"                 dbo.HoaDon ON dbo.HoaDonChiTiet.id_hoa_don = dbo.HoaDon.id";
         ArrayList<HoaDonChiTietReponse> lists = new ArrayList<>();
         try (Connection con = DBConnect.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {

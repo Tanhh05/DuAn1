@@ -22,18 +22,28 @@ import lombok.ToString;
 @Builder
 public class HoaDonResponse {
 
-   private Integer id;
+    private Integer id;
+   
     private String maHoaDon;
-    private String tongTien;
-    private String trangThai;
+    
     private String ngayTao;
     
     private String ngayCapNhap;
-    private String hoTen;
-    private String SDT;
-    private String diaChi;
+    
+    private Double tongTien;
     
     private String maNhanVien;
+    
+    private String hoTen;
+    
+    private String diaChi;
+    
+    private String SDT;
+    
+    private Integer trangThai;
+    
+    private Integer hinhThucTT;
+    
 
  
 

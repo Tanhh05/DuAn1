@@ -28,5 +28,5 @@ public class LichSuHoaDonResponse {
     
     private String ngayCapNhap;
     
-    private String trangThai;
+    private Integer trangThai;
 }

@@ -23,8 +23,12 @@ import lombok.ToString;
 @Builder
 public class HoaDonChiTietReponse {
     private Integer id;
+    
     private String maSPCT;
+    
     private String tenSPCT;
+    
     private Integer soLuong;
+    
     private Double tongTien;
 }
