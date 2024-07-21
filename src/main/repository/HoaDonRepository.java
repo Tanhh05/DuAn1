@@ -107,9 +107,8 @@ public class HoaDonRepository {
     return lists;
 }
 
-
-    
-    public ArrayList<HoaDonResponse> search(String keyword, Integer trangThai, Integer httt, Double giaMin, Double giaMax, String ngayBatDau, String ngayKetThuc) {
+   
+   public ArrayList<HoaDonResponse> search(String keyword, Integer trangThai, Integer httt, Double giaMin, Double giaMax, String ngayBatDau, String ngayKetThuc) {
     String sql = "SELECT " +
             "dbo.HoaDon.id, " +
             "dbo.HoaDon.ma_hoa_don, " +
@@ -129,22 +128,23 @@ public class HoaDonRepository {
 
     // Append conditions for mandatory parameters
     sql += " AND dbo.HoaDon.tong_tien BETWEEN ? AND ?";
-    
+
     // Append conditions for optional parameters
     if (trangThai != null) {
-        sql += " AND dbo.HoaDon.trang_thai = ?";
+        sql += " AND CAST(dbo.HoaDon.trang_thai AS VARCHAR) LIKE ?";
     }
     if (httt != null) {
-        sql += " AND dbo.HoaDon.hinh_thuc_thanh_toan = ?";
+        sql += " AND CAST(dbo.HoaDon.hinh_thuc_thanh_toan AS VARCHAR) LIKE ?";
     }
-    if (ngayBatDau != null) {
-        sql += " AND dbo.HoaDon.ngay_tao >= ?";
-    }
-    if (ngayKetThuc != null) {
-        sql += " AND dbo.HoaDon.ngay_tao <= ?";
+    if (ngayBatDau != null && ngayKetThuc != null) {
+        sql += " AND dbo.HoaDon.ngay_tao BETWEEN ? AND ?";
     }
     if (keyword != null && !keyword.isEmpty()) {
-        sql += " AND (dbo.HoaDon.ma_hoa_don LIKE ? OR dbo.NhanVien.ma_nhan_vien LIKE ? OR dbo.KhachHang.ho_ten LIKE ? OR dbo.KhachHang.dia_chi LIKE ? OR dbo.KhachHang.so_dien_thoai LIKE ?)";
+        sql += " AND (dbo.HoaDon.ma_hoa_don LIKE ? " +
+               " OR dbo.NhanVien.ma_nhan_vien LIKE ? " +
+               " OR dbo.KhachHang.ho_ten LIKE ? " +
+               " OR dbo.KhachHang.dia_chi LIKE ? " +
+               " OR dbo.KhachHang.so_dien_thoai LIKE ?)";
     }
 
     ArrayList<HoaDonResponse> lists = new ArrayList<>();
@@ -158,16 +158,14 @@ public class HoaDonRepository {
 
         // Set optional parameters based on conditions
         if (trangThai != null) {
-            ps.setInt(index++, trangThai);
+            ps.setString(index++, "%" + trangThai.toString() + "%");
         }
         if (httt != null) {
-            ps.setInt(index++, httt);
+            ps.setString(index++, "%" + httt.toString() + "%");
         }
-        if (ngayBatDau != null) {
-            ps.setDate(index++, java.sql.Date.valueOf(ngayBatDau));
-        }
-        if (ngayKetThuc != null) {
-            ps.setDate(index++, java.sql.Date.valueOf(ngayKetThuc));
+        if (ngayBatDau != null && ngayKetThuc != null) {
+            ps.setString(index++, ngayBatDau);
+            ps.setString(index++, ngayKetThuc);
         }
         if (keyword != null && !keyword.isEmpty()) {
             String value = "%" + keyword + "%";
@@ -202,6 +200,9 @@ public class HoaDonRepository {
     return lists;
 }
 
+    public HoaDonResponse getAll(String invoiceId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
-   
+
 }
