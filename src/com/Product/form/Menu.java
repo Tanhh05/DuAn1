@@ -52,10 +52,8 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
     public Menu() {
         
         initComponents();
-        initWebcam();
-      
+        initWebcam();     
         setLocationRelativeTo(null);
-
     }
 
     @SuppressWarnings("unchecked")
@@ -206,7 +204,7 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
             }
             
             if (result != null) {
-                  System.out.println("hi?n th? toi day");
+                  System.out.println("hien thi toi day");
                    String ketqua = result.getText();
                     result_field.setText(ketqua);
                

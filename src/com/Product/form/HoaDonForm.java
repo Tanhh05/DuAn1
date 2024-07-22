@@ -92,18 +92,15 @@ public class HoaDonForm extends javax.swing.JPanel {
         lshdRepo = new LichSuHoaDonRepository();
 
         dtmLichSuHoaDon = (DefaultTableModel) tb_lshd.getModel();
-        
-        
-
     }
 // tao ra mot bien toan cuc de luu tru du lieu qr
     String resultQR;
 //     chuyen vao ham tim tim kiem(ham quet qr)
+
     HoaDonForm(String ketqua) {
-         resultQR = ketqua;
+        resultQR = ketqua;
         System.out.println("ma hoa don tai jframe hoa don " + resultQR);
-        
-//        timKiemHoaDon(resultQR);
+        timKiemHoaDon(resultQR);
     }
 
 //    public void close(){
@@ -693,26 +690,52 @@ public class HoaDonForm extends javax.swing.JPanel {
         // TODO add your handling code here:
         Menu menu = new Menu();
         menu.setVisible(true);
-        
-
     }//GEN-LAST:event_QRActionPerformed
 
-    private ArrayList timKiemHoaDon(String resultQR) {
+    private ArrayList<HoaDonResponse> timKiemHoaDon(String resultQR) {
         HoaDonRepository hdRepo = new HoaDonRepository();
         ArrayList<HoaDonResponse> list = new ArrayList<>();
-        System.out.println("Chuc nang tim kiem hoa don");
-        if (resultQR.equals("")) {
-            System.out.println("khong co ma");
+
+        System.out.println("Chức năng tìm kiếm hóa đơn");
+
+        if (resultQR == null || resultQR.trim().isEmpty()) {
+            System.out.println("Không có mã QR được cung cấp");
         } else {
+            HoaDonResponse hoaDon = hdRepo.timKiemHoaDonResponsebyQR(resultQR.trim());
+            if (hoaDon != null) {
+                list.add(hoaDon);
+                System.out.println("Hóa đơn được tìm thấy: " + hoaDon.getMaHoaDon());
+            } else {
+                System.out.println("Không tìm thấy hóa đơn với mã QR: " + resultQR);
+            }
 
-            list.add(hdRepo.timKiemHoaDonResponsebyQR(resultQR));
-
-            System.out.println("hoa don :" + list);
+            // Hiển thị dữ liệu trên giao diện
+            System.out.println(list);
             showDataTableV2(list);
         }
+
         return list;
     }
 
+    private void showDataTableV2(ArrayList<HoaDonResponse> lists) {
+        dtm.setRowCount(0);
+        AtomicInteger index = new AtomicInteger(1); // Initialize index starting from 1
+
+        lists.forEach(s -> dtm.addRow(new Object[]{
+            index.getAndIncrement(),
+            s.getMaHoaDon(),
+            s.getNgayTao(),
+            s.getNgayCapNhap(),
+            s.getTongTien(),
+            s.getMaNhanVien(),
+            s.getHoTen(),
+            s.getDiaChi(),
+            s.getSDT(),
+            s.getTrangThai() == 0 ? "Đã Thanh Toán" : "Chưa thanh toán",
+            s.getHinhThucTT() == 0 ? "Tiền Mặt" : "Chuyển Khoản"
+        }));
+    }
+    
     private void showDataTableV3(HoaDonResponse hoaDon) {
         // Kiểm tra nếu dtm không null
         if (dtm == null) {
@@ -741,19 +764,6 @@ public class HoaDonForm extends javax.swing.JPanel {
             System.out.println("Dữ liệu đã thêm vào bảng: " + hoaDon);
         }
     }
-
-    private void showDataTableV2(ArrayList<HoaDonResponse> lists) {
-
-        dtm.setRowCount(0);
-        AtomicInteger index = new AtomicInteger(1); // Khoi tao 1 gia tri bat dau bang 1 de tu dong tang
-        // for..each + lamda 
-        lists.forEach(s -> dtm.addRow(new Object[]{
-            index.getAndIncrement(), s.getMaHoaDon(), s.getNgayTao(), s.getNgayCapNhap(), s.getTongTien(), s.getMaNhanVien(),
-            s.getHoTen(), s.getDiaChi(), s.getSDT(), s.getTrangThai() == 0 ? "Đã Thanh Toán" : "Chưa thanh toán", s.getHinhThucTT() == 0 ? "Tiền Mặt" : "Chuyển Khoản"
-        }));
-
-    }
-
 
     private void txtSearch1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearch1ActionPerformed
         // TODO add your handling code here:
