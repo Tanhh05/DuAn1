@@ -48,6 +48,8 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
     HoaDonForm form;
     private static final long serialVersionUID = 6441489157408381878L;
 //    private Executor executor = Executors.newSingleThreadExecutor(this);
+    
+    public static String maHD;
 
     public Menu() {
         
@@ -206,6 +208,7 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
             if (result != null) {
                   System.out.println("hien thi toi day");
                    String ketqua = result.getText();
+                   maHD = result.getText();
                     result_field.setText(ketqua);
                
 //                  ** cach day du lieu chuyen sang trang hoa don don va tim kiem
@@ -214,11 +217,11 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
 //                    dong giao dien quet ma
 //  
                    
-                   HoaDonForm hoadonform = new HoaDonForm(ketqua);
+//                   HoaDonForm hoadonform = new HoaDonForm(ketqua);
 //                SanPhamChiTietJFrame.maSPCT = result.getText();
-                hoadonform.resultQR = ketqua;
+//                hoadonform.resultQR = ketqua;
                 webcam.close();
-                this.setVisible(false);
+                dispose();// lai di
                 return;
             }
         }

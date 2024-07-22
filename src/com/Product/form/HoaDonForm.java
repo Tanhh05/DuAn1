@@ -52,6 +52,7 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,6 +74,7 @@ public class HoaDonForm extends javax.swing.JPanel {
     private LichSuHoaDonRepository lshdRepo;
 
     private Menu menu;
+    
 
     public HoaDonForm() {
         initComponents();
@@ -100,7 +102,8 @@ public class HoaDonForm extends javax.swing.JPanel {
     HoaDonForm(String ketqua) {
         resultQR = ketqua;
         System.out.println("ma hoa don tai jframe hoa don " + resultQR);
-        timKiemHoaDon(resultQR);
+//        timKiemHoaDon(resultQR);
+//        getHoaDonResponse(resultQR);
     }
 
 //    public void close(){
@@ -118,9 +121,10 @@ public class HoaDonForm extends javax.swing.JPanel {
     }
 
     private void showTableHoaDonChiTiet(ArrayList<HoaDonChiTietReponse> lists) {
-        dtmHoaDonChiTiet.setRowCount(0);
+        DefaultTableModel model = (DefaultTableModel) tb_hdct.getModel();
+        model.setRowCount(0);// quet lai phat
         AtomicInteger index = new AtomicInteger(1);
-        lists.forEach(s -> dtmHoaDonChiTiet.addRow(new Object[]{
+        lists.forEach(s -> model.addRow(new Object[]{
             index.getAndIncrement(), s.getMaSPCT(),
             s.getThuongHieu(), s.getXuatXu(),
             s.getMauSac(),
@@ -690,6 +694,17 @@ public class HoaDonForm extends javax.swing.JPanel {
         // TODO add your handling code here:
         Menu menu = new Menu();
         menu.setVisible(true);
+        menu.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                HoaDonResponse hdrp = getHoaDonResponse(menu.maHD);// quet lai di
+               ArrayList<HoaDonChiTietReponse> listHdct = hdctRepo.getByIdHoaDon(hdrp.getId());
+                System.out.println("hdct: " + listHdct);
+            showTableHoaDonChiTiet(listHdct);// quét l?i xem nó nhan ko
+
+//    showTableLichSuHoaDon(ArrayList<LichSuHoaDonResponse> lists);
+            }
+        });
     }//GEN-LAST:event_QRActionPerformed
 
     private ArrayList<HoaDonResponse> timKiemHoaDon(String resultQR) {
@@ -716,9 +731,25 @@ public class HoaDonForm extends javax.swing.JPanel {
 
         return list;
     }
+    
+    private HoaDonResponse getHoaDonResponse(String resultQR) {
+        HoaDonRepository hdRepo = new HoaDonRepository();
+        ArrayList<HoaDonResponse> list = new ArrayList<>();
+
+        System.out.println("Chức năng tìm kiếm hóa đơn");
+
+        if (resultQR == null || resultQR.trim().isEmpty()) {
+            System.out.println("Không có mã QR được cung cấp");
+        } else {
+            HoaDonResponse hoaDon = hdRepo.timKiemHoaDonResponsebyQR(resultQR.trim());
+            return hoaDon;
+        }
+
+        return null;
+    }
 
     private void showDataTableV2(ArrayList<HoaDonResponse> lists) {
-        dtm.setRowCount(0);
+        dtm.setRowCount(0); // Clear the existing rows in the table model
         AtomicInteger index = new AtomicInteger(1); // Initialize index starting from 1
 
         lists.forEach(s -> dtm.addRow(new Object[]{
@@ -734,7 +765,10 @@ public class HoaDonForm extends javax.swing.JPanel {
             s.getTrangThai() == 0 ? "Đã Thanh Toán" : "Chưa thanh toán",
             s.getHinhThucTT() == 0 ? "Tiền Mặt" : "Chuyển Khoản"
         }));
+
+        dtm.fireTableDataChanged(); // Notify the table that the model has been updated
     }
+
     
     private void showDataTableV3(HoaDonResponse hoaDon) {
         // Kiểm tra nếu dtm không null
