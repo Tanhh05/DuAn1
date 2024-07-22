@@ -18,7 +18,6 @@ import java.util.concurrent.ThreadFactory;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Executor;
@@ -38,25 +37,26 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
-
-
+import java.util.concurrent.ExecutorService;
 
 public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory {
 
-    private WebcamPanel panel = null;
-    private Webcam webcam = null;
-
+    private Webcam webcam;
+    private WebcamPanel panel;
+    private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private int trangHienThi; // Ensure this variable is declared
+    HoaDonForm form;
     private static final long serialVersionUID = 6441489157408381878L;
-    private Executor executor = Executors.newSingleThreadExecutor(this);
+//    private Executor executor = Executors.newSingleThreadExecutor(this);
 
     public Menu() {
-        initComponents();
-        initWebcam();   
-        setLocationRelativeTo(null);
         
+        initComponents();
+        initWebcam();
+      
+        setLocationRelativeTo(null);
+
     }
-    
-       
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -66,7 +66,7 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
         result_field = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        jphienthiQR = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -84,17 +84,16 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
         jLabel1.setText("Resultado");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 320, -1, -1));
 
-        jPanel2.setBackground(new java.awt.Color(250, 250, 250));
-        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(230, 230, 230)));
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 470, 300));
+        jphienthiQR.setBackground(new java.awt.Color(250, 250, 250));
+        jphienthiQR.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(230, 230, 230)));
+        jphienthiQR.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        jPanel1.add(jphienthiQR, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 470, 300));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 520, 400));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
-    
+
     /**
      * @param args the command line arguments
      */
@@ -142,73 +141,89 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
             new Menu().setVisible(true);
         });
     }
-    
-    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPanel jphienthiQR;
     private javax.swing.JTextField result_field;
     // End of variables declaration//GEN-END:variables
 
     private void initWebcam() {
         Dimension size = WebcamResolution.QVGA.getSize();
-        try {
-            webcam = Webcam.getWebcams().get(0);
-            webcam.setViewSize(size);
-            webcam.open();
-        } catch (IndexOutOfBoundsException | WebcamException e) {
-            JOptionPane.showMessageDialog(this, "No webcam detected or cannot be opened!", "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-
+        webcam = Webcam.getWebcams().get(0);
+        webcam.setViewSize(size);
+        
         panel = new WebcamPanel(webcam);
         panel.setPreferredSize(size);
         panel.setFPSDisplayed(true);
-
-        jPanel2.add(panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 470, 300));
-
+        
+        this.add(panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 470, 300));
+        
         executor.execute(this);
     }
 
     @Override
     public void run() {
-        do {
+        while (true) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-                Thread.currentThread().interrupt(); // Restore interrupted status
             }
-
+            
             Result result = null;
             BufferedImage image = null;
-
+            
             if (webcam.isOpen()) {
                 if ((image = webcam.getImage()) == null) {
+                   
                     continue;
                 }
             }
-
+            
             LuminanceSource source = new BufferedImageLuminanceSource(image);
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-
+            
             try {
+           
                 result = new MultiFormatReader().decode(bitmap);
             } catch (NotFoundException ex) {
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            if (result != null) {
-                String qrText = result.getText();
-                SwingUtilities.invokeLater(() -> {
-                    result_field.setText(qrText);
-                });
-                // Further handling of the QR code result
+            
+            if (trangHienThi == 1) {
+                if (result != null) {
+//                        
+//                    String ketqua = result.getText();
+//                    result_field.setText(ketqua);
+                    webcam.close();
+                    this.dispose();
+                    return;
+                }
             }
-        } while (!Thread.currentThread().isInterrupted()); // Check if the thread is interrupted
+            
+            if (result != null) {
+                  System.out.println("hi?n th? toi day");
+                   String ketqua = result.getText();
+                    result_field.setText(ketqua);
+               
+//                  ** cach day du lieu chuyen sang trang hoa don don va tim kiem
+                               
+//                    tao m?t ham tim kiem voi ma hoa don
+//                    dong giao dien quet ma
+//  
+                   
+                   HoaDonForm hoadonform = new HoaDonForm(ketqua);
+//                SanPhamChiTietJFrame.maSPCT = result.getText();
+                hoadonform.resultQR = ketqua;
+                webcam.close();
+                this.setVisible(false);
+                return;
+            }
+        }
     }
 
     @Override
@@ -217,6 +232,5 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
         t.setDaemon(true);
         return t;
     }
-    
     
 }

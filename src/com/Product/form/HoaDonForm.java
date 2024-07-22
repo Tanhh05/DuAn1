@@ -24,7 +24,6 @@ import main.response.HoaDonChiTietReponse;
 import main.response.HoaDonResponse;
 import main.response.LichSuHoaDonResponse;
 
-
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -38,7 +37,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
-
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -62,56 +60,66 @@ import java.util.Scanner;
 
 public class HoaDonForm extends javax.swing.JPanel {
 
-    private DefaultTableModel dtm;
-    
+    private DefaultTableModel dtm = new DefaultTableModel();
+
     private HoaDonRepository hdRepo;
-    
+
     private HoaDonChiTietRepository hdctRepo;
-    
+
     private DefaultTableModel dtmHoaDonChiTiet;
-    
+
     private DefaultTableModel dtmLichSuHoaDon;
-    
+
     private LichSuHoaDonRepository lshdRepo;
-     
+
     private Menu menu;
 
-    
     public HoaDonForm() {
         initComponents();
         setOpaque(false);
         hdRepo = new HoaDonRepository();
-        
+
         hdctRepo = new HoaDonChiTietRepository();
-        
+
         dtm = (DefaultTableModel) tb_hd.getModel();
-        
+
         showDataTable(hdRepo.getAll());
-        
-        dtmHoaDonChiTiet =(DefaultTableModel) tb_hdct.getModel();
-        
+//        String reString = "HD002";
+//        showDataTableV2(timKiemHoaDon(reString));
+
+        dtmHoaDonChiTiet = (DefaultTableModel) tb_hdct.getModel();
+
         lshdRepo = new LichSuHoaDonRepository();
-        
+
         dtmLichSuHoaDon = (DefaultTableModel) tb_lshd.getModel();
         
         
+
     }
-    
+// tao ra mot bien toan cuc de luu tru du lieu qr
+    String resultQR;
+//     chuyen vao ham tim tim kiem(ham quet qr)
+    HoaDonForm(String ketqua) {
+         resultQR = ketqua;
+        System.out.println("ma hoa don tai jframe hoa don " + resultQR);
+        
+//        timKiemHoaDon(resultQR);
+    }
+
 //    public void close(){
 //        WindowEvent closeWindow = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
 //        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(closeWindow);
 //    }
-    
     private void showDataTable(ArrayList<HoaDonResponse> lists) {
         dtm.setRowCount(0);
         AtomicInteger index = new AtomicInteger(1); // Khoi tao 1 gia tri bat dau bang 1 de tu dong tang
         // for..each + lamda 
         lists.forEach(s -> dtm.addRow(new Object[]{
-            index.getAndIncrement(),s.getMaHoaDon(),s.getNgayTao(),s.getNgayCapNhap(),s.getTongTien(),s.getMaNhanVien(),
-            s.getHoTen(),s.getDiaChi(),s.getSDT(),s.getTrangThai()== 0 ? "Đã Thanh Toán" : "Chưa thanh toán",s.getHinhThucTT()==0 ? "Tiền Mặt":"Chuyển Khoản"
+            index.getAndIncrement(), s.getMaHoaDon(), s.getNgayTao(), s.getNgayCapNhap(), s.getTongTien(), s.getMaNhanVien(),
+            s.getHoTen(), s.getDiaChi(), s.getSDT(), s.getTrangThai() == 0 ? "Đã Thanh Toán" : "Chưa thanh toán", s.getHinhThucTT() == 0 ? "Tiền Mặt" : "Chuyển Khoản"
         }));
     }
-    
+
     private void showTableHoaDonChiTiet(ArrayList<HoaDonChiTietReponse> lists) {
         dtmHoaDonChiTiet.setRowCount(0);
         AtomicInteger index = new AtomicInteger(1);
@@ -124,14 +132,15 @@ public class HoaDonForm extends javax.swing.JPanel {
             s.isTrangThai() ? "Còn hàng" : "Hết hàng"
         }));
     }
+
     private void showTableLichSuHoaDon(ArrayList<LichSuHoaDonResponse> lists) {
         dtmLichSuHoaDon.setRowCount(0);
         AtomicInteger index = new AtomicInteger(1);
         lists.forEach(s -> dtmLichSuHoaDon.addRow(new Object[]{
-            index.getAndIncrement(), s.getMaNV(),s.getNgayCapNhap(),s.getTrangThai()== 0 ? "Đã Thanh Toán" : "Chưa thanh toán"
+            index.getAndIncrement(), s.getMaNV(), s.getNgayCapNhap(), s.getTrangThai() == 0 ? "Đã Thanh Toán" : "Chưa thanh toán"
         }));
     }
-    
+
     private static void addTableHeader(PdfPTable table) {
         table.addCell("Invoice code");
         table.addCell("Customer name");
@@ -147,7 +156,7 @@ public class HoaDonForm extends javax.swing.JPanel {
         cell.setBorder(PdfPCell.NO_BORDER);
         return cell;
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -564,7 +573,7 @@ public class HoaDonForm extends javax.swing.JPanel {
         showDataTable(hdRepo.getAll());
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    
+
     private void cbox_hoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbox_hoaDonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cbox_hoaDonActionPerformed
@@ -639,8 +648,8 @@ public class HoaDonForm extends javax.swing.JPanel {
                 row.createCell(6, XSSFCell.CELL_TYPE_STRING).setCellValue(hoaDon.getHoTen()); // Tên Khách Hàng
                 row.createCell(7, XSSFCell.CELL_TYPE_STRING).setCellValue(hoaDon.getDiaChi()); // Địa Chỉ
                 row.createCell(8, XSSFCell.CELL_TYPE_STRING).setCellValue(hoaDon.getSDT()); // Số Điện Thoại
-                row.createCell(9, XSSFCell.CELL_TYPE_STRING).setCellValue(hoaDon.getTrangThai()== 0 ? "Đã Thanh Toán" : "Chưa thanh toán"); // Trạng Thái
-                row.createCell(10, XSSFCell.CELL_TYPE_STRING).setCellValue(hoaDon.getHinhThucTT()==0 ? "Tiền Mặt":"Chuyển Khoản"); // Hình Thức Thanh Toán
+                row.createCell(9, XSSFCell.CELL_TYPE_STRING).setCellValue(hoaDon.getTrangThai() == 0 ? "Đã Thanh Toán" : "Chưa thanh toán"); // Trạng Thái
+                row.createCell(10, XSSFCell.CELL_TYPE_STRING).setCellValue(hoaDon.getHinhThucTT() == 0 ? "Tiền Mặt" : "Chuyển Khoản"); // Hình Thức Thanh Toán
 
                 // Nếu có các cột dữ liệu khác, bạn có thể tiếp tục thêm vào đây
             }
@@ -682,9 +691,69 @@ public class HoaDonForm extends javax.swing.JPanel {
 
     private void QRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_QRActionPerformed
         // TODO add your handling code here:
-        Menu menu= new Menu();
+        Menu menu = new Menu();
         menu.setVisible(true);
+        
+
     }//GEN-LAST:event_QRActionPerformed
+
+    private ArrayList timKiemHoaDon(String resultQR) {
+        HoaDonRepository hdRepo = new HoaDonRepository();
+        ArrayList<HoaDonResponse> list = new ArrayList<>();
+        System.out.println("Chuc nang tim kiem hoa don");
+        if (resultQR.equals("")) {
+            System.out.println("khong co ma");
+        } else {
+
+            list.add(hdRepo.timKiemHoaDonResponsebyQR(resultQR));
+
+            System.out.println("hoa don :" + list);
+            showDataTableV2(list);
+        }
+        return list;
+    }
+
+    private void showDataTableV3(HoaDonResponse hoaDon) {
+        // Kiểm tra nếu dtm không null
+        if (dtm == null) {
+            System.err.println("DefaultTableModel (dtm) chưa được khởi tạo.");
+            return;
+        }
+
+        // Xóa tất cả các hàng trong bảng
+        dtm.setRowCount(0);
+
+        // Thêm dữ liệu mới vào bảng nếu hoaDon không null
+        if (hoaDon != null) {
+            dtm.addRow(new Object[]{
+                1, // Chỉ số hàng, có thể thay đổi nếu cần
+                hoaDon.getMaHoaDon(),
+                hoaDon.getNgayTao(),
+                hoaDon.getNgayCapNhap(),
+                hoaDon.getTongTien(),
+                hoaDon.getMaNhanVien(),
+                hoaDon.getHoTen(),
+                hoaDon.getDiaChi(),
+                hoaDon.getSDT(),
+                hoaDon.getTrangThai() == 0 ? "Đã Thanh Toán" : "Chưa Thanh Toán",
+                hoaDon.getHinhThucTT() == 0 ? "Tiền Mặt" : "Chuyển Khoản"
+            });
+            System.out.println("Dữ liệu đã thêm vào bảng: " + hoaDon);
+        }
+    }
+
+    private void showDataTableV2(ArrayList<HoaDonResponse> lists) {
+
+        dtm.setRowCount(0);
+        AtomicInteger index = new AtomicInteger(1); // Khoi tao 1 gia tri bat dau bang 1 de tu dong tang
+        // for..each + lamda 
+        lists.forEach(s -> dtm.addRow(new Object[]{
+            index.getAndIncrement(), s.getMaHoaDon(), s.getNgayTao(), s.getNgayCapNhap(), s.getTongTien(), s.getMaNhanVien(),
+            s.getHoTen(), s.getDiaChi(), s.getSDT(), s.getTrangThai() == 0 ? "Đã Thanh Toán" : "Chưa thanh toán", s.getHinhThucTT() == 0 ? "Tiền Mặt" : "Chuyển Khoản"
+        }));
+
+    }
+
 
     private void txtSearch1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearch1ActionPerformed
         // TODO add your handling code here:
@@ -735,7 +804,6 @@ public class HoaDonForm extends javax.swing.JPanel {
 
             // Call the search method with inputs
             showDataTable(hdRepo.search(keyword, trangThai, httt, giaMin, giaMax, startDate != null ? startDate.toString() : null, endDate != null ? endDate.toString() : null));
-     
 
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập số hợp lệ cho phạm vi giá.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -761,7 +829,7 @@ public class HoaDonForm extends javax.swing.JPanel {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-    // Choose file path for PDF file
+        // Choose file path for PDF file
 //        JFileChooser fileChooser = new JFileChooser();
 //        fileChooser.setDialogTitle("Chọn vị trí và tên file để lưu PDF");
 //        int userSelection = fileChooser.showSaveDialog(null);
@@ -846,7 +914,7 @@ public class HoaDonForm extends javax.swing.JPanel {
 //                e.printStackTrace();
 //            }
 //        }
-    
+
         // Choose file path for PDF file
 //        int rowIndex = tb_hd.getSelectedRow();
 //        if (rowIndex == -1) {
@@ -936,97 +1004,96 @@ public class HoaDonForm extends javax.swing.JPanel {
 //                ex.printStackTrace();
 //            }
 //        }
-    
-    int rowIndex = tb_hd.getSelectedRow();
-    if (rowIndex == -1) {
-        JOptionPane.showMessageDialog(null, "Chọn dòng để xuất");
-        return;
-    }
-
-    // Get data from the selected row
-    String maHoaDon = (String) tb_hd.getValueAt(rowIndex, 1); // Assuming column 0 is MaHoaDon
-    String hoTen = (String) tb_hd.getValueAt(rowIndex, 6); // Assuming column 1 is HoTen
-    String ngayTao = (String) tb_hd.getValueAt(rowIndex, 2); // Assuming column 2 is NgayTao
-    String tenSanPham = (String) tb_hd.getValueAt(rowIndex, 8); // Assuming column 3 is TenSanPham
-    Double tongTien = (Double) tb_hd.getValueAt(rowIndex, 4); // Assuming column 4 is TongTien
-
-    JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setDialogTitle("Chọn vị trí và tên file để lưu PDF");
-    int userSelection = fileChooser.showSaveDialog(null);
-
-    if (userSelection == JFileChooser.APPROVE_OPTION) {
-        File fileToSave = fileChooser.getSelectedFile();
-        String outputPath = fileToSave.getAbsolutePath();
-
-        // Ensure the file has a .pdf extension
-        if (!outputPath.endsWith(".pdf")) {
-            outputPath += ".pdf";
+        int rowIndex = tb_hd.getSelectedRow();
+        if (rowIndex == -1) {
+            JOptionPane.showMessageDialog(null, "Chọn dòng để xuất");
+            return;
         }
 
-        // Generate PDF file
-        try {
-            // Create a new Document
-            Document document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream(outputPath));
-            document.open();
+        // Get data from the selected row
+        String maHoaDon = (String) tb_hd.getValueAt(rowIndex, 1); // Assuming column 0 is MaHoaDon
+        String hoTen = (String) tb_hd.getValueAt(rowIndex, 6); // Assuming column 1 is HoTen
+        String ngayTao = (String) tb_hd.getValueAt(rowIndex, 2); // Assuming column 2 is NgayTao
+        String tenSanPham = (String) tb_hd.getValueAt(rowIndex, 8); // Assuming column 3 is TenSanPham
+        Double tongTien = (Double) tb_hd.getValueAt(rowIndex, 4); // Assuming column 4 is TongTien
 
-            // Font for the title
-            Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn vị trí và tên file để lưu PDF");
+        int userSelection = fileChooser.showSaveDialog(null);
 
-            // Add the main title
-            Paragraph title = new Paragraph("Bill", boldFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            document.add(title);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            String outputPath = fileToSave.getAbsolutePath();
 
-            // Add staff and customer information (Example data here)
-            PdfPTable infoTable = new PdfPTable(2);
-            infoTable.setWidthPercentage(100);
-            infoTable.setSpacingBefore(10f);
-            infoTable.setSpacingAfter(10f);
-            infoTable.addCell(getCell("Staff", PdfPCell.ALIGN_LEFT));
-            infoTable.addCell(getCell("Admin", PdfPCell.ALIGN_RIGHT));
-            infoTable.addCell(getCell("Customer", PdfPCell.ALIGN_LEFT));
-            infoTable.addCell(getCell("MR A", PdfPCell.ALIGN_RIGHT));
-            document.add(infoTable);
+            // Ensure the file has a .pdf extension
+            if (!outputPath.endsWith(".pdf")) {
+                outputPath += ".pdf";
+            }
 
-            // Create and format the table
-            PdfPTable table = new PdfPTable(5); // Updated to 5 columns
-            table.setWidthPercentage(100); // Table width
+            // Generate PDF file
+            try {
+                // Create a new Document
+                Document document = new Document();
+                PdfWriter.getInstance(document, new FileOutputStream(outputPath));
+                document.open();
 
-            // Format the table header
-            addTableHeader(table);
+                // Font for the title
+                Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
 
-            // Add data from the selected row
-            table.addCell(maHoaDon);
-            table.addCell(hoTen);
-            table.addCell(ngayTao);
-            table.addCell(tenSanPham); // Add product name
-            table.addCell(String.format("$%.2f", tongTien)); // Format the amount as currency
+                // Add the main title
+                Paragraph title = new Paragraph("Bill", boldFont);
+                title.setAlignment(Element.ALIGN_CENTER);
+                document.add(title);
 
-            // Add the table to the document
-            document.add(table);
+                // Add staff and customer information (Example data here)
+                PdfPTable infoTable = new PdfPTable(2);
+                infoTable.setWidthPercentage(100);
+                infoTable.setSpacingBefore(10f);
+                infoTable.setSpacingAfter(10f);
+                infoTable.addCell(getCell("Staff", PdfPCell.ALIGN_LEFT));
+                infoTable.addCell(getCell("Admin", PdfPCell.ALIGN_RIGHT));
+                infoTable.addCell(getCell("Customer", PdfPCell.ALIGN_LEFT));
+                infoTable.addCell(getCell("MR A", PdfPCell.ALIGN_RIGHT));
+                document.add(infoTable);
 
-            // Add total amount (example value, adjust as needed)
-            Paragraph total = new Paragraph("Total: " + String.format("$%.2f", tongTien), boldFont);
-            total.setAlignment(Element.ALIGN_RIGHT);
-            total.setSpacingBefore(10f);
-            document.add(total);
+                // Create and format the table
+                PdfPTable table = new PdfPTable(5); // Updated to 5 columns
+                table.setWidthPercentage(100); // Table width
 
-            // Generate QR code for the invoice
-            String qrContent = "Invoice ID: " + maHoaDon;
-            BarcodeQRCode qrCode = new BarcodeQRCode(qrContent, 100, 100, null);
-            com.itextpdf.text.Image qrImage = qrCode.getImage();
-            qrImage.setAlignment(Element.ALIGN_CENTER);
-            qrImage.setSpacingBefore(10f);
-            document.add(qrImage);
+                // Format the table header
+                addTableHeader(table);
 
-            // Close the document
-            document.close();
-            System.out.println("PDF created at: " + outputPath);
-        } catch (DocumentException | IOException ex) {
-            ex.printStackTrace();
+                // Add data from the selected row
+                table.addCell(maHoaDon);
+                table.addCell(hoTen);
+                table.addCell(ngayTao);
+                table.addCell(tenSanPham); // Add product name
+                table.addCell(String.format("$%.2f", tongTien)); // Format the amount as currency
+
+                // Add the table to the document
+                document.add(table);
+
+                // Add total amount (example value, adjust as needed)
+                Paragraph total = new Paragraph("Total: " + String.format("$%.2f", tongTien), boldFont);
+                total.setAlignment(Element.ALIGN_RIGHT);
+                total.setSpacingBefore(10f);
+                document.add(total);
+
+                // Generate QR code for the invoice
+                String qrContent = maHoaDon;
+                BarcodeQRCode qrCode = new BarcodeQRCode(qrContent, 100, 100, null);
+                com.itextpdf.text.Image qrImage = qrCode.getImage();
+                qrImage.setAlignment(Element.ALIGN_CENTER);
+                qrImage.setSpacingBefore(10f);
+                document.add(qrImage);
+
+                // Close the document
+                document.close();
+                System.out.println("PDF created at: " + outputPath);
+            } catch (DocumentException | IOException ex) {
+                ex.printStackTrace();
+            }
         }
-    }
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
