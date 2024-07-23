@@ -17,14 +17,47 @@ import main.response.LichSuHoaDonResponse;
  * @author ADMIN
  */
 public class LichSuHoaDonRepository {
-    public ArrayList<LichSuHoaDonResponse> getAll(){
-        String sql="SELECT  dbo.NhanVien.id, dbo.NhanVien.ma_nhan_vien, dbo.HoaDon.ngay_cap_nhat, dbo.HoaDon.trang_thai\n" +
-"FROM      dbo.NhanVien INNER JOIN\n" +
-"                 dbo.HoaDon ON dbo.NhanVien.id = dbo.HoaDon.id_nhan_vien";
-        
+    public ArrayList<LichSuHoaDonResponse> getAll() {
+        String sql = "SELECT  dbo.NhanVien.id, dbo.NhanVien.ma_nhan_vien, dbo.HoaDon.ngay_cap_nhat, dbo.HoaDon.trang_thai\n"
+                + "FROM      dbo.NhanVien INNER JOIN\n"
+                + "                 dbo.HoaDon ON dbo.NhanVien.id = dbo.HoaDon.id_nhan_vien";
+
         try (Connection con = DBConnect.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
-            
+
+            ResultSet rs = ps.executeQuery();
+
+            ArrayList<LichSuHoaDonResponse> lists = new ArrayList<>();
+            while (rs.next()) {
+                LichSuHoaDonResponse response
+                        = LichSuHoaDonResponse.builder()
+                                .id(rs.getInt(1))
+                                .maNV(rs.getString(2))
+                                .ngayCapNhap(rs.getString(3))
+                                .trangThai(rs.getInt(4))
+                                .build();
+                lists.add(response);
+            }
+            return lists;
+        } catch (Exception e) {
+            // loi => nhay vao catch
+            e.printStackTrace(System.out);
+        }
+        return null;
+    }
+    
+    public ArrayList<LichSuHoaDonResponse> getByIdLSHoaDon(Integer idHD) {
+        String sql = "SELECT dbo.NhanVien.id, \n"
+                + "       dbo.NhanVien.ma_nhan_vien, \n"
+                + "       dbo.HoaDon.ngay_cap_nhat, \n"
+                + "       dbo.HoaDon.trang_thai\n"
+                + "FROM dbo.NhanVien \n"
+                + "INNER JOIN dbo.HoaDon ON dbo.NhanVien.id = dbo.HoaDon.id_nhan_vien\n"
+                + "WHERE dbo.NhanVien.id = ?;";
+
+        try (Connection con = DBConnect.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setObject(1, idHD);// l?
             ResultSet rs = ps.executeQuery();
 
             ArrayList<LichSuHoaDonResponse> lists = new ArrayList<>();

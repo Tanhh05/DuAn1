@@ -50,6 +50,8 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
 //    private Executor executor = Executors.newSingleThreadExecutor(this);
     
     public static String maHD;
+    
+    public static String id;
 
     public Menu() {
         
@@ -209,6 +211,7 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
                   System.out.println("hien thi toi day");
                    String ketqua = result.getText();
                    maHD = result.getText();
+                   id = result.getText();
                     result_field.setText(ketqua);
                
 //                  ** cach day du lieu chuyen sang trang hoa don don va tim kiem

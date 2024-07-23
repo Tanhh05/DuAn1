@@ -19,19 +19,31 @@ import main.response.HoaDonResponse;
 public class HoaDonChiTietRepository {
 
     public ArrayList<HoaDonChiTietReponse> getAll() {
-        String sql = "SELECT dbo.SanPhamChiTiet.id, dbo.SanPhamChiTiet.ma_san_pham_chi_tiet, dbo.ThuongHieu.ten_thuong_hieu, "
-                + "dbo.XuatXu.ten_nuoc, dbo.MauSac.ten_mau, dbo.KichThuoc.size, dbo.ChatLieu.ten_chat_lieu, dbo.CoAo.ten_co_ao, "
-                + "dbo.DoDay.ten_do_day, dbo.TinhLinhHoat.ten_tinh_linh_hoat, dbo.SanPhamChiTiet.gia_ban, dbo.SanPhamChiTiet.so_luong_ton, "
-                + "dbo.SanPhamChiTiet.trang_thai "
-                + "FROM dbo.SanPhamChiTiet "
-                + "INNER JOIN dbo.ThuongHieu ON dbo.SanPhamChiTiet.id_thuong_hieu = dbo.ThuongHieu.id "
-                + "INNER JOIN dbo.XuatXu ON dbo.SanPhamChiTiet.id_xuat_xu = dbo.XuatXu.id "
-                + "INNER JOIN dbo.MauSac ON dbo.SanPhamChiTiet.id_mau_sac = dbo.MauSac.id "
-                + "INNER JOIN dbo.KichThuoc ON dbo.SanPhamChiTiet.id_kich_thuoc = dbo.KichThuoc.id "
-                + "INNER JOIN dbo.ChatLieu ON dbo.SanPhamChiTiet.id_chat_lieu = dbo.ChatLieu.id "
-                + "INNER JOIN dbo.CoAo ON dbo.SanPhamChiTiet.id_co_ao = dbo.CoAo.id "
-                + "INNER JOIN dbo.DoDay ON dbo.SanPhamChiTiet.id_do_day = dbo.DoDay.id "
-                + "INNER JOIN dbo.TinhLinhHoat ON dbo.SanPhamChiTiet.id_tinh_linh_hoat = dbo.TinhLinhHoat.id";
+        String sql = "SELECT \n" +
+"    spct.id, \n" +
+"    spct.ma_san_pham_chi_tiet, \n" +
+"    th.ten_thuong_hieu, \n" +
+"    xx.ten_nuoc, \n" +
+"    ms.ten_mau, \n" +
+"    kt.size, \n" +
+"    cl.ten_chat_lieu, \n" +
+"    ca.ten_co_ao, \n" +
+"    dd.ten_do_day, \n" +
+"    tlh.ten_tinh_linh_hoat, \n" +
+"    spct.gia_ban, \n" +
+"    hdct.so_luong, \n" +
+"    spct.trang_thai \n" +
+"FROM \n" +
+"    dbo.SanPhamChiTiet spct\n" +
+"    INNER JOIN dbo.ThuongHieu th ON spct.id_thuong_hieu = th.id \n" +
+"    INNER JOIN dbo.XuatXu xx ON spct.id_xuat_xu = xx.id \n" +
+"    INNER JOIN dbo.MauSac ms ON spct.id_mau_sac = ms.id \n" +
+"    INNER JOIN dbo.KichThuoc kt ON spct.id_kich_thuoc = kt.id \n" +
+"    INNER JOIN dbo.ChatLieu cl ON spct.id_chat_lieu = cl.id \n" +
+"    INNER JOIN dbo.CoAo ca ON spct.id_co_ao = ca.id \n" +
+"    INNER JOIN dbo.DoDay dd ON spct.id_do_day = dd.id \n" +
+"    INNER JOIN dbo.TinhLinhHoat tlh ON spct.id_tinh_linh_hoat = tlh.id\n" +
+"    INNER JOIN dbo.HoaDonChiTiet hdct ON spct.id = hdct.id_san_pham_chi_tiet";
 
         ArrayList<HoaDonChiTietReponse> lists = new ArrayList<>();
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -49,21 +61,33 @@ public class HoaDonChiTietRepository {
     }
 
     public ArrayList<HoaDonChiTietReponse> getByIdHoaDon(Integer idHD) {
-        String sql = "SELECT dbo.SanPhamChiTiet.id, dbo.SanPhamChiTiet.ma_san_pham_chi_tiet, dbo.ThuongHieu.ten_thuong_hieu,  \n"
-                + "    dbo.XuatXu.ten_nuoc, dbo.MauSac.ten_mau, dbo.KichThuoc.size, dbo.ChatLieu.ten_chat_lieu, dbo.CoAo.ten_co_ao,  \n"
-                + "    dbo.DoDay.ten_do_day, dbo.TinhLinhHoat.ten_tinh_linh_hoat, dbo.SanPhamChiTiet.gia_ban, dbo.SanPhamChiTiet.so_luong_ton,  \n"
-                + "    dbo.SanPhamChiTiet.trang_thai  \n"
-                + "    FROM dbo.SanPhamChiTiet  \n"
-                + "	INNER JOIN dbo.HoaDonChiTiet ON dbo.SanPhamChiTiet.id = dbo.HoaDonChiTiet.id_san_pham_chi_tiet\n"
-                + "    INNER JOIN dbo.ThuongHieu ON dbo.SanPhamChiTiet.id_thuong_hieu = dbo.ThuongHieu.id  \n"
-                + "    INNER JOIN dbo.XuatXu ON dbo.SanPhamChiTiet.id_xuat_xu = dbo.XuatXu.id  \n"
-                + "    INNER JOIN dbo.MauSac ON dbo.SanPhamChiTiet.id_mau_sac = dbo.MauSac.id  \n"
-                + "    INNER JOIN dbo.KichThuoc ON dbo.SanPhamChiTiet.id_kich_thuoc = dbo.KichThuoc.id  \n"
-                + "    INNER JOIN dbo.ChatLieu ON dbo.SanPhamChiTiet.id_chat_lieu = dbo.ChatLieu.id  \n"
-                + "    INNER JOIN dbo.CoAo ON dbo.SanPhamChiTiet.id_co_ao = dbo.CoAo.id  \n"
-                + "    INNER JOIN dbo.DoDay ON dbo.SanPhamChiTiet.id_do_day = dbo.DoDay.id  \n"
-                + "    INNER JOIN dbo.TinhLinhHoat ON dbo.SanPhamChiTiet.id_tinh_linh_hoat = dbo.TinhLinhHoat.id\n"
-                + "        WHERE dbo.hoadonchitiet.id_hoa_don = ?";
+        String sql = "SELECT \n" +
+"    spct.id, \n" +
+"    spct.ma_san_pham_chi_tiet, \n" +
+"    th.ten_thuong_hieu,  \n" +
+"    xx.ten_nuoc, \n" +
+"    ms.ten_mau, \n" +
+"    kt.size, \n" +
+"    cl.ten_chat_lieu, \n" +
+"    ca.ten_co_ao,  \n" +
+"    dd.ten_do_day, \n" +
+"    tlh.ten_tinh_linh_hoat, \n" +
+"    spct.gia_ban, \n" +
+"    hdct.so_luong, \n" +
+"    spct.trang_thai  \n" +
+"FROM \n" +
+"    dbo.SanPhamChiTiet spct \n" +
+"    INNER JOIN dbo.HoaDonChiTiet hdct ON spct.id = hdct.id_san_pham_chi_tiet\n" +
+"    INNER JOIN dbo.ThuongHieu th ON spct.id_thuong_hieu = th.id  \n" +
+"    INNER JOIN dbo.XuatXu xx ON spct.id_xuat_xu = xx.id  \n" +
+"    INNER JOIN dbo.MauSac ms ON spct.id_mau_sac = ms.id  \n" +
+"    INNER JOIN dbo.KichThuoc kt ON spct.id_kich_thuoc = kt.id  \n" +
+"    INNER JOIN dbo.ChatLieu cl ON spct.id_chat_lieu = cl.id  \n" +
+"    INNER JOIN dbo.CoAo ca ON spct.id_co_ao = ca.id  \n" +
+"    INNER JOIN dbo.DoDay dd ON spct.id_do_day = dd.id  \n" +
+"    INNER JOIN dbo.TinhLinhHoat tlh ON spct.id_tinh_linh_hoat = tlh.id\n" +
+"WHERE \n" +
+"    hdct.id_hoa_don = ?";
 
         ArrayList<HoaDonChiTietReponse> lists = new ArrayList<>();
         try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
