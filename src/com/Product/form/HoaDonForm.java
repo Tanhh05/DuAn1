@@ -47,6 +47,7 @@ import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.Barcode;
+import com.itextpdf.text.pdf.Barcode128;
 import com.itextpdf.text.pdf.BarcodeQRCode;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -145,38 +146,6 @@ public class HoaDonForm extends javax.swing.JPanel {
         }));
     }
 
-//    private static void addTableHeader(PdfPTable table) {
-//        table.addCell("Invoice code");
-//        table.addCell("Customer name");
-//        table.addCell("Date of payment");
-//        table.addCell("Product Name"); // New column
-//        table.addCell("Total amount");
-//    }
-//
-//    private static PdfPCell getCell(String text, int alignment) {
-//        PdfPCell cell = new PdfPCell(new Phrase(text));
-//        cell.setPadding(0);
-//        cell.setHorizontalAlignment(alignment);
-//        cell.setBorder(PdfPCell.NO_BORDER);
-//        return cell;
-//    }
-    
-//    private static PdfPCell getCell(String text, int alignment) {
-//        PdfPCell cell = new PdfPCell(new Phrase(text));
-//        cell.setPadding(0);
-//        cell.setHorizontalAlignment(alignment);
-//        cell.setBorder(PdfPCell.NO_BORDER);
-//        return cell;
-//    }
-//
-//    private static void addTableHeader(PdfPTable table) {
-//        Stream.of("STT", "Tên sản phẩm", "Số lượng", "Đơn giá", "Thành tiền").forEach(columnTitle -> {
-//            PdfPCell header = new PdfPCell();
-//            header.setBackgroundColor(BaseColor.LIGHT_GRAY);
-//            header.setBorderWidth(2);
-//            header.setPhrase(new Phrase(columnTitle));
-//            table.addCell(header);
-//        });
     private static PdfPCell getCell(String text, int alignment, Font font) {
         PdfPCell cell = new PdfPCell(new Phrase(text, font));
         cell.setPadding(5);
@@ -193,7 +162,7 @@ public class HoaDonForm extends javax.swing.JPanel {
             header.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(header);
         });
-}
+    }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -332,7 +301,7 @@ public class HoaDonForm extends javax.swing.JPanel {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel4.setText("Trạng thái hóa đơn");
 
-        cbox_hoaDon.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Chưa Thanh Toán", "Đã Thanh Toán", "Tat Ca", " " }));
+        cbox_hoaDon.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Chưa Thanh Toán", "Đã Thanh Toán", "Tat Ca" }));
         cbox_hoaDon.setLineColor(new java.awt.Color(51, 51, 255));
         cbox_hoaDon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -340,7 +309,7 @@ public class HoaDonForm extends javax.swing.JPanel {
             }
         });
 
-        cb_httt.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Tiền Mặt", "Chuyển Khoản" }));
+        cb_httt.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Tiền Mặt", "Chuyển Khoản", "Tat Ca" }));
         cb_httt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cb_htttActionPerformed(evt);
@@ -823,30 +792,34 @@ public class HoaDonForm extends javax.swing.JPanel {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
         try {
+            // Get trangThai
+            Integer trangThai = cbox_hoaDon.getSelectedIndex();
+            if (trangThai == 3) { // Assuming "Tất cả" is the first item
+                trangThai = null;
+            }
+
+            // Get httt
+            Integer httt = cb_httt.getSelectedIndex();
+            if (httt == 3) { // Assuming "Tất cả" is the first item for httt
+                httt = null;
+            }
+
             // Get giaMin
             Double giaMin = null;
             String giaMinText = txt_timTheoGia.getText().trim();
             if (!giaMinText.isEmpty()) {
-                try {
-                    giaMin = Double.parseDouble(giaMinText);
-                } catch (NumberFormatException e) {
-                    throw new NumberFormatException("Invalid number format for giaMin");
-                }
+                giaMin = Double.parseDouble(giaMinText);
             }
 
             // Get giaMax
             Double giaMax = null;
             String giaMaxText = txt_timTheoGiaMax.getText().trim();
             if (!giaMaxText.isEmpty()) {
-                try {
-                    giaMax = Double.parseDouble(giaMaxText);
-                } catch (NumberFormatException e) {
-                    throw new NumberFormatException("Invalid number format for giaMax");
-                }
+                giaMax = Double.parseDouble(giaMaxText);
             }
 
-            // Call the search method with inputs
-            showDataTable(hdRepo.timKiemTheoGia(giaMin, giaMax));
+            // Call the search method with the updated inputs
+            showDataTable(hdRepo.search(trangThai, httt, giaMin, giaMax));
 
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập số hợp lệ cho phạm vi giá.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
@@ -854,14 +827,14 @@ public class HoaDonForm extends javax.swing.JPanel {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void tb_hdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_hdMouseClicked
         // TODO add your handling code here:
-        int id = hdRepo.getAll().get(tb_hd.getSelectedRow()).getId();
-        showTableHoaDonChiTiet(hdctRepo.getAll());
-        showTableLichSuHoaDon(lshdRepo.getAll());
+        int i = tb_hd.getSelectedRow();
+        int id_hoaDon = (int) tb_hd.getValueAt(i, 0);
+        showTableHoaDonChiTiet(hdctRepo.getByIdHoaDon(id_hoaDon));
+        showTableLichSuHoaDon(lshdRepo.getByIdLSHoaDon(id_hoaDon));
     }//GEN-LAST:event_tb_hdMouseClicked
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
@@ -870,276 +843,23 @@ public class HoaDonForm extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-        // Choose file path for PDF file
-//        JFileChooser fileChooser = new JFileChooser();
-//        fileChooser.setDialogTitle("Chọn vị trí và tên file để lưu PDF");
-//        int userSelection = fileChooser.showSaveDialog(null);
-//
-//        if (userSelection == JFileChooser.APPROVE_OPTION) {
-//            File fileToSave = fileChooser.getSelectedFile();
-//            String outputPath = fileToSave.getAbsolutePath();
-//
-//            // Ensure the file has a .pdf extension
-//            if (!outputPath.endsWith(".pdf")) {
-//                outputPath += ".pdf";
-//            }
-//
-//            // Generate PDF file
-//            try {
-//                // Create a new Document
-//                Document document = new Document();
-//                PdfWriter.getInstance(document, new FileOutputStream(outputPath));
-//                document.open();
-//
-//                // Font for the title
-//                Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
-//
-//                // Add the main title
-//                Paragraph title = new Paragraph("INVOICE", boldFont);
-//                title.setAlignment(Element.ALIGN_CENTER);
-//                document.add(title);
-//
-//                // Add staff and customer information
-//                PdfPTable infoTable = new PdfPTable(2);
-//                infoTable.setWidthPercentage(100);
-//                infoTable.setSpacingBefore(10f);
-//                infoTable.setSpacingAfter(10f);
-//                infoTable.addCell(getCell("Staff", PdfPCell.ALIGN_LEFT));
-//                infoTable.addCell(getCell("Admin", PdfPCell.ALIGN_RIGHT));
-//                infoTable.addCell(getCell("Customer", PdfPCell.ALIGN_LEFT));
-//                infoTable.addCell(getCell("MR A", PdfPCell.ALIGN_RIGHT));
-//                document.add(infoTable);
-//
-//                // Create and format the table
-//                PdfPTable table = new PdfPTable(4); // Number of columns
-//                table.setWidthPercentage(100); // Table width
-//
-//                // Format the table header
-//                addTableHeader(table);
-//
-//                // Create a list of invoices (this should come from your data source)
-//                HoaDonRepository hoaDonRepository = new HoaDonRepository();
-//                ArrayList<HoaDonResponse> listItem = hoaDonRepository.getAll();
-//
-//                // Add data to the table
-//                for (HoaDonResponse hoaDon : listItem) {
-//                    table.addCell(hoaDon.getMaHoaDon());
-//                    table.addCell(String.valueOf(hoaDon.getHoTen()));
-//                    table.addCell(String.valueOf(hoaDon.getHinhThucTT()));
-//                    table.addCell(String.valueOf(hoaDon.getNgayTao()));
-//                }
-//
-//                // Add the table to the document
-//                document.add(table);
-//
-//                // Add total amount (example value, adjust as needed)
-//                Paragraph total = new Paragraph("Total: $8.00", boldFont);
-//                total.setAlignment(Element.ALIGN_RIGHT);
-//                total.setSpacingBefore(10f);
-//                document.add(total);
-//
-//                // Generate QR code for each invoice
-//                for (HoaDonResponse hoaDon : listItem) {
-//                    String qrContent = "Invoice ID: " + hoaDon.getMaHoaDon();
-//                    BarcodeQRCode qrCode = new BarcodeQRCode(qrContent, 100, 100, null);
-//                    com.itextpdf.text.Image qrImage = qrCode.getImage();
-//                    qrImage.setAlignment(Element.ALIGN_CENTER);
-//                    qrImage.setSpacingBefore(10f);
-//                    document.add(qrImage);
-//                }
-//
-//                // Close the document
-//                document.close();
-//                System.out.println("PDF created at: " + outputPath);
-//            } catch (DocumentException | IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-        // Choose file path for PDF file
-//        int rowIndex = tb_hd.getSelectedRow();
-//        if (rowIndex == -1) {
-//            JOptionPane.showMessageDialog(null, "Chọn dòng để xuất");
-//            return;
-//        }
-//
-//        // Get data from the selected row
-//        String maHoaDon = (String) tb_hd.getValueAt(rowIndex, 1); // Assuming column 0 is MaHoaDon
-//        String hoTen = (String) tb_hd.getValueAt(rowIndex, 6); // Adjust index as needed
-//        String ngayTao = (String) tb_hd.getValueAt(rowIndex, 2); // Adjust index as needed
-//        Double tongTien = (Double) tb_hd.getValueAt(rowIndex, 4); // Adjust index as needed
-//
-//        JFileChooser fileChooser = new JFileChooser();
-//        fileChooser.setDialogTitle("Chọn vị trí và tên file để lưu PDF");
-//        int userSelection = fileChooser.showSaveDialog(null);
-//
-//        if (userSelection == JFileChooser.APPROVE_OPTION) {
-//            File fileToSave = fileChooser.getSelectedFile();
-//            String outputPath = fileToSave.getAbsolutePath();
-//
-//            // Ensure the file has a .pdf extension
-//            if (!outputPath.endsWith(".pdf")) {
-//                outputPath += ".pdf";
-//            }
-//
-//            // Generate PDF file
-//            try {
-//                // Create a new Document
-//                Document document = new Document();
-//                PdfWriter.getInstance(document, new FileOutputStream(outputPath));
-//                document.open();
-//
-//                // Font for the title
-//                Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
-//
-//                // Add the main title
-//                Paragraph title = new Paragraph("Bill", boldFont);
-//                title.setAlignment(Element.ALIGN_CENTER);
-//                document.add(title);
-//
-//                // Add staff and customer information (Example data here)
-//                PdfPTable infoTable = new PdfPTable(2);
-//                infoTable.setWidthPercentage(100);
-//                infoTable.setSpacingBefore(10f);
-//                infoTable.setSpacingAfter(10f);
-//                infoTable.addCell(getCell("Staff", PdfPCell.ALIGN_LEFT));
-//                infoTable.addCell(getCell("Admin", PdfPCell.ALIGN_RIGHT));
-//                infoTable.addCell(getCell("Customer", PdfPCell.ALIGN_LEFT));
-//                infoTable.addCell(getCell("MR A", PdfPCell.ALIGN_RIGHT));
-//                document.add(infoTable);
-//
-//                // Create and format the table
-//                PdfPTable table = new PdfPTable(4); // Number of columns
-//                table.setWidthPercentage(100); // Table width
-//
-//                // Format the table header
-//                addTableHeader(table);
-//
-//                // Add data from the selected row
-//                table.addCell(maHoaDon);
-//                table.addCell(hoTen);
-//                table.addCell(ngayTao);
-//                table.addCell(String.format("$%.2f", tongTien)); // Format the amount as currency
-//
-//                // Add the table to the document
-//                document.add(table);
-//
-//                // Add total amount (example value, adjust as needed)
-//                Paragraph total = new Paragraph("Total: " + String.format("$%.2f", tongTien), boldFont);
-//                total.setAlignment(Element.ALIGN_RIGHT);
-//                total.setSpacingBefore(10f);
-//                document.add(total);
-//
-//                // Generate QR code for the invoice
-//                String qrContent = "Invoice ID: " + maHoaDon;
-//                BarcodeQRCode qrCode = new BarcodeQRCode(qrContent, 100, 100, null);
-//                com.itextpdf.text.Image qrImage = qrCode.getImage();
-//                qrImage.setAlignment(Element.ALIGN_CENTER);
-//                qrImage.setSpacingBefore(10f);
-//                document.add(qrImage);
-//
-//                // Close the document
-//                document.close();
-//                System.out.println("PDF created at: " + outputPath);
-//            } catch (DocumentException | IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-//        int rowIndex = tb_hd.getSelectedRow();
-//        if (rowIndex == -1) {
-//            JOptionPane.showMessageDialog(null, "Chọn dòng để xuất");
-//            return;
-//        }
-//
-//        // Get data from the selected row
-//        String maHoaDon = (String) tb_hd.getValueAt(rowIndex, 1); // Assuming column 0 is MaHoaDon
-//        String hoTen = (String) tb_hd.getValueAt(rowIndex, 6); // Assuming column 1 is HoTen
-//        String ngayTao = (String) tb_hd.getValueAt(rowIndex, 2); // Assuming column 2 is NgayTao
-//        String tenSanPham = (String) tb_hdct.getValueAt(rowIndex, 2); // Assuming column 3 is TenSanPham
-//        Double tongTien = (Double) tb_hd.getValueAt(rowIndex, 4); // Assuming column 4 is TongTien
-//
-//        JFileChooser fileChooser = new JFileChooser();
-//        fileChooser.setDialogTitle("Chọn vị trí và tên file để lưu PDF");
-//        int userSelection = fileChooser.showSaveDialog(null);
-//
-//        if (userSelection == JFileChooser.APPROVE_OPTION) {
-//            File fileToSave = fileChooser.getSelectedFile();
-//            String outputPath = fileToSave.getAbsolutePath();
-//
-//            // Ensure the file has a .pdf extension
-//            if (!outputPath.endsWith(".pdf")) {
-//                outputPath += ".pdf";
-//            }
-//
-//            // Generate PDF file
-//            try {
-//                // Create a new Document
-//                Document document = new Document();
-//                PdfWriter.getInstance(document, new FileOutputStream(outputPath));
-//                document.open();
-//
-//                // Font for the title
-//                Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
-//
-//                // Add the main title
-//                Paragraph title = new Paragraph("Bill", boldFont);
-//                title.setAlignment(Element.ALIGN_CENTER);
-//                document.add(title);
-//
-//                // Add staff and customer information (Example data here)
-//                PdfPTable infoTable = new PdfPTable(2);
-//                infoTable.setWidthPercentage(100);
-//                infoTable.setSpacingBefore(10f);
-//                infoTable.setSpacingAfter(10f);
-//                infoTable.addCell(getCell("Staff", PdfPCell.ALIGN_LEFT));
-//                infoTable.addCell(getCell("Admin", PdfPCell.ALIGN_RIGHT));
-//                infoTable.addCell(getCell("Customer", PdfPCell.ALIGN_LEFT));
-//                infoTable.addCell(getCell("MR A", PdfPCell.ALIGN_RIGHT));
-//                document.add(infoTable);
-//
-//                // Create and format the table
-//                PdfPTable table = new PdfPTable(5); // Updated to 5 columns
-//                table.setWidthPercentage(100); // Table width
-//
-//                // Format the table header
-//                addTableHeader(table);
-//
-//                // Add data from the selected row
-//                table.addCell(maHoaDon);
-//                table.addCell(hoTen);
-//                table.addCell(ngayTao);
-//                table.addCell(tenSanPham); // Add product name
-//                table.addCell(String.format("$%.2f", tongTien)); // Format the amount as currency
-//
-//                // Add the table to the document
-//                document.add(table);
-//
-//                // Add total amount (example value, adjust as needed)
-//                Paragraph total = new Paragraph("Total: " + String.format("$%.2f", tongTien), boldFont);
-//                total.setAlignment(Element.ALIGN_RIGHT);
-//                total.setSpacingBefore(10f);
-//                document.add(total);
-//
-//                // Generate QR code for the invoice
-//                String qrContent = maHoaDon;
-//                BarcodeQRCode qrCode = new BarcodeQRCode(qrContent, 100, 100, null);
-//                com.itextpdf.text.Image qrImage = qrCode.getImage();
-//                qrImage.setAlignment(Element.ALIGN_CENTER);
-//                qrImage.setSpacingBefore(10f);
-//                document.add(qrImage);
-//
-//                // Close the document
-//                document.close();
-//                System.out.println("PDF created at: " + outputPath);
-//            } catch (DocumentException | IOException ex) {
-//                ex.printStackTrace();
-//            }
-//        }
-    
+        // TODO add your handling code here:    
         int rowIndex = tb_hd.getSelectedRow();
+        int rowIndexx = tb_hdct.getSelectedRow();
+
+// Check if rows are selected in both tables
         if (rowIndex == -1) {
-            JOptionPane.showMessageDialog(null, "Chọn dòng để xuất");
+            JOptionPane.showMessageDialog(null, "Chọn dòng trong bảng hóa đơn để xuất");
+            return;
+        }
+        if (rowIndexx == -1) {
+            JOptionPane.showMessageDialog(null, "Chọn dòng trong bảng chi tiết hóa đơn để xuất");
+            return;
+        }
+
+// Ensure the rowIndex is within bounds
+        if (rowIndex < 0 || rowIndex >= tb_hd.getRowCount() || rowIndexx < 0 || rowIndexx >= tb_hdct.getRowCount()) {
+            JOptionPane.showMessageDialog(null, "Dòng chọn không hợp lệ.");
             return;
         }
 
@@ -1150,9 +870,9 @@ public class HoaDonForm extends javax.swing.JPanel {
         Double tongTien = (Double) tb_hd.getValueAt(rowIndex, 4); // Assuming column 4 is TongTien
 
 // Get data from the selected row in tb_hdct
-        String tenSanPham = (String) tb_hdct.getValueAt(rowIndex, 2); // Assuming column 2 is TenSanPham in tb_hdct
-        Integer soLuong = (Integer) tb_hdct.getValueAt(rowIndex, 11); // Assuming column 3 is SoLuong in tb_hdct
-        Double donGia = (Double) tb_hdct.getValueAt(rowIndex, 10); // Assuming column 4 is DonGia in tb_hdct
+        String tenSanPham = (String) tb_hdct.getValueAt(rowIndexx, 2); // Assuming column 2 is TenSanPham in tb_hdct
+        Integer soLuong = (Integer) tb_hdct.getValueAt(rowIndexx, 11); // Assuming column 11 is SoLuong in tb_hdct
+        Double donGia = (Double) tb_hdct.getValueAt(rowIndexx, 10); // Assuming column 10 is DonGia in tb_hdct
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Chọn vị trí và tên file để lưu PDF");
@@ -1171,8 +891,8 @@ public class HoaDonForm extends javax.swing.JPanel {
             try {
                 // Create a new Document
                 Document document = new Document();
-                PdfWriter.getInstance(document, new FileOutputStream(outputPath));
-                document.open();
+                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(outputPath));
+                document.open(); // Open the document for writing
 
                 // Load Vietnamese font
                 BaseFont baseFont = BaseFont.createFont("C:\\Users\\ADMIN\\Desktop\\Du_An_1_SD19310-master\\Du_An_1_SD19310-master\\lib\\TimesNewRoman\\SVN-Times New Roman.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
@@ -1180,29 +900,11 @@ public class HoaDonForm extends javax.swing.JPanel {
                 Font boldFont = new Font(baseFont, 12, Font.BOLD);
                 Font regularFont = new Font(baseFont, 12, Font.NORMAL);
 
-                // Add the logo
-                String logoPath = "D:\\anhbophimcuocdoi\\logo.png"; // Update this path
-                File logoFile = new File(logoPath);
-                if (logoFile.exists()) {
-                    Image logo = Image.getInstance(logoPath);
-                    logo.setAlignment(Element.ALIGN_LEFT); // Align logo to the left
-                    logo.scalePercent(50);
-                    document.add(logo);
-                } else {
-                    System.err.println("Logo file not found at: " + logoPath);
-                }
-
                 // Add the main title
                 Paragraph title = new Paragraph("HÓA ĐƠN BÁN HÀNG\nBILL OF SALE", titleFont);
                 title.setAlignment(Element.ALIGN_CENTER);
                 title.setSpacingAfter(20);
                 document.add(title);
-
-                // Add store information
-                Paragraph storeInfo = new Paragraph("SNEAKER BEESHOES\nĐịa chỉ: 66 Mễ Trì Hạ, Nam Từ Liêm, Hà Nội", boldFont);
-                storeInfo.setAlignment(Element.ALIGN_CENTER);
-                storeInfo.setSpacingAfter(10);
-                document.add(storeInfo);
 
                 // Add invoice details
                 PdfPTable infoTable = new PdfPTable(2);
@@ -1219,35 +921,43 @@ public class HoaDonForm extends javax.swing.JPanel {
                 infoTable.addCell(getCell("Admin", PdfPCell.ALIGN_RIGHT, regularFont)); // Placeholder for staff name
                 document.add(infoTable);
 
-                // Create and format the table
-                PdfPTable table = new PdfPTable(5);
-                table.setWidthPercentage(100); // Table width
-                table.setSpacingBefore(20f);
+                // Add products table
+                PdfPTable productTable = new PdfPTable(5);
+                productTable.setWidthPercentage(100);
+                productTable.setSpacingBefore(20f);
 
                 // Add table headers
-                addTableHeader(table, boldFont);
+                productTable.addCell(new PdfPCell(new Phrase("STT", boldFont)));
+                productTable.addCell(new PdfPCell(new Phrase("Tên sản phẩm", boldFont)));
+                productTable.addCell(new PdfPCell(new Phrase("Số lượng", boldFont)));
+                productTable.addCell(new PdfPCell(new Phrase("Đơn giá", boldFont)));
+                productTable.addCell(new PdfPCell(new Phrase("Thành tiền", boldFont)));
 
-                // Add data from the selected row
-                table.addCell(new PdfPCell(new Phrase("1", regularFont))); // Assuming single item for simplicity
-                table.addCell(new PdfPCell(new Phrase(tenSanPham, regularFont))); // Add product name
-                table.addCell(new PdfPCell(new Phrase(String.valueOf(soLuong), regularFont))); // Add quantity
-                table.addCell(new PdfPCell(new Phrase(String.format("%.0f đ", donGia), regularFont))); // Add unit price
-                table.addCell(new PdfPCell(new Phrase(String.format("%.0f đ", soLuong * donGia), regularFont))); // Calculate total price
+                // Add product details
+                productTable.addCell(new PdfPCell(new Phrase("1", regularFont)));
+                productTable.addCell(new PdfPCell(new Phrase(tenSanPham, regularFont)));
+                productTable.addCell(new PdfPCell(new Phrase(String.valueOf(soLuong), regularFont)));
+                productTable.addCell(new PdfPCell(new Phrase(String.format("%.0f đ", donGia), regularFont)));
+                productTable.addCell(new PdfPCell(new Phrase(String.format("%.0f đ", soLuong * donGia), regularFont)));
 
-                // Add the table to the document
-                document.add(table);
+                document.add(productTable);
 
                 // Add total amount
-                Paragraph total = new Paragraph("Tổng tiền phải thanh toán: " + String.format("%.0f đ", tongTien), boldFont);
-                total.setAlignment(Element.ALIGN_RIGHT);
-                total.setSpacingBefore(10f);
-                document.add(total);
+                PdfPTable totalTable = new PdfPTable(2);
+                totalTable.setWidthPercentage(100);
+                totalTable.setSpacingBefore(10f);
+                totalTable.setSpacingAfter(10f);
+                totalTable.addCell(getCell("Tổng tiền phải thanh toán:", PdfPCell.ALIGN_LEFT, boldFont));
+                totalTable.addCell(getCell(String.format("%.0f đ", tongTien), PdfPCell.ALIGN_RIGHT, regularFont));
+                totalTable.addCell(getCell("Trạng thái đơn hàng:", PdfPCell.ALIGN_LEFT, boldFont));
+                totalTable.addCell(getCell("Hoàn thành", PdfPCell.ALIGN_RIGHT, regularFont));
+                document.add(totalTable);
 
                 // Generate QR code for the invoice
                 String qrContent = maHoaDon;
                 BarcodeQRCode qrCode = new BarcodeQRCode(qrContent, 100, 100, null);
                 com.itextpdf.text.Image qrImage = qrCode.getImage();
-                qrImage.setAlignment(Element.ALIGN_CENTER);
+                qrImage.setAlignment(Element.ALIGN_RIGHT);
                 qrImage.setSpacingBefore(10f);
                 document.add(qrImage);
 
@@ -1267,17 +977,16 @@ public class HoaDonForm extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void cb_htttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_htttActionPerformed
-        try {
-            // Get selected trangThai from combobox
-            Integer httt = cb_httt.getSelectedIndex();
-
-            // Call the search method with trangThai
-            showDataTable(hdRepo.hinhThucThanhToan(httt));
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        
+//        try {
+//            // Get selected trangThai from combobox
+//            Integer httt = cb_httt.getSelectedIndex();
+//
+//            // Call the search method with trangThai
+//            showDataTable(hdRepo.hinhThucThanhToan(httt));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.", "Error", JOptionPane.ERROR_MESSAGE);
+//        }       
     }//GEN-LAST:event_cb_htttActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

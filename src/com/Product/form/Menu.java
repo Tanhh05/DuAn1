@@ -157,13 +157,13 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
         Dimension size = WebcamResolution.QVGA.getSize();
         webcam = Webcam.getWebcams().get(0);
         webcam.setViewSize(size);
-        
+
         panel = new WebcamPanel(webcam);
         panel.setPreferredSize(size);
         panel.setFPSDisplayed(true);
-        
+
         this.add(panel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 470, 300));
-        
+
         executor.execute(this);
     }
 
@@ -175,27 +175,27 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
             } catch (InterruptedException ex) {
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             Result result = null;
             BufferedImage image = null;
-            
+
             if (webcam.isOpen()) {
                 if ((image = webcam.getImage()) == null) {
-                   
+
                     continue;
                 }
             }
-            
+
             LuminanceSource source = new BufferedImageLuminanceSource(image);
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-            
+
             try {
-           
+
                 result = new MultiFormatReader().decode(bitmap);
             } catch (NotFoundException ex) {
                 Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             if (trangHienThi == 1) {
                 if (result != null) {
 //                        
@@ -206,20 +206,18 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
                     return;
                 }
             }
-            
+
             if (result != null) {
-                  System.out.println("hien thi toi day");
-                   String ketqua = result.getText();
-                   maHD = result.getText();
-                   id = result.getText();
-                    result_field.setText(ketqua);
-               
+                System.out.println("hien thi toi day");
+                String ketqua = result.getText();
+                maHD = result.getText();
+                id = result.getText();
+                result_field.setText(ketqua);
+
 //                  ** cach day du lieu chuyen sang trang hoa don don va tim kiem
-                               
 //                    tao m?t ham tim kiem voi ma hoa don
 //                    dong giao dien quet ma
 //  
-                   
 //                   HoaDonForm hoadonform = new HoaDonForm(ketqua);
 //                SanPhamChiTietJFrame.maSPCT = result.getText();
 //                hoadonform.resultQR = ketqua;
@@ -236,5 +234,5 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
         t.setDaemon(true);
         return t;
     }
-    
+
 }

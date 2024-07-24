@@ -78,4 +78,38 @@ public class LichSuHoaDonRepository {
         }
         return null;
     }
+    
+    public ArrayList<LichSuHoaDonResponse> ByIDHoaDon() {
+        String sql = "SELECT dbo.NhanVien.id, \n" +
+"       dbo.NhanVien.ma_nhan_vien, \n" +
+"       dbo.HoaDon.ngay_cap_nhat, \n" +
+"       dbo.HoaDon.trang_thai\n" +
+"FROM dbo.NhanVien\n" +
+"INNER JOIN dbo.HoaDon \n" +
+"    ON dbo.NhanVien.id = dbo.HoaDon.id_nhan_vien\n" +
+"	where dbo.HoaDon.id = ?";
+
+        try (Connection con = DBConnect.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ResultSet rs = ps.executeQuery();
+
+            ArrayList<LichSuHoaDonResponse> lists = new ArrayList<>();
+            while (rs.next()) {
+                LichSuHoaDonResponse response
+                        = LichSuHoaDonResponse.builder()
+                                .id(rs.getInt(1))
+                                .maNV(rs.getString(2))
+                                .ngayCapNhap(rs.getString(3))
+                                .trangThai(rs.getInt(4))
+                                .build();
+                lists.add(response);
+            }
+            return lists;
+        } catch (Exception e) {
+            // loi => nhay vao catch
+            e.printStackTrace(System.out);
+        }
+        return null;
+    }
 }
