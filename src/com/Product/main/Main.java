@@ -6,8 +6,8 @@ import com.Product.event.EventMenuSelected;
 import com.Product.event.EventShowPopupMenu;
 import com.Product.form.DoiMatKhauForm;
 import com.Product.form.BanHangForm;
-import com.Product.form.GiamGiaForm;
 import com.Product.form.HoaDonForm;
+import com.Product.form.GiamGiaForm;
 import com.Product.form.KhachHangForm;
 import com.Product.form.MainForm;
 import com.Product.form.NhanVienForm;
@@ -18,6 +18,9 @@ import com.Product.swing.PopupMenu;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.miginfocom.swing.MigLayout;
 import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTarget;
@@ -53,7 +56,11 @@ public class Main extends javax.swing.JFrame {
                 }else if(menuIndex==2){
                     main.showForm(new HoaDonForm());
                 }else if(menuIndex==3){
-                    main.showForm(new GiamGiaForm());
+                    try {
+                        main.showForm(new GiamGiaForm());
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }else if(menuIndex==4){
                     main.showForm(new KhachHangForm());
                 }else if(menuIndex==5){

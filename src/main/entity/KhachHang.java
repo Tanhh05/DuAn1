@@ -3,6 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package main.entity;
+
+
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,17 +14,31 @@ import lombok.Setter;
 import lombok.ToString;
 /**
  *
- * @author ADMIN
+ * @author admin
  */
-@AllArgsConstructor
-@NoArgsConstructor
+// Them cac annotation (@) can thiet 
+@AllArgsConstructor  // contructor full tham so 
+@NoArgsConstructor // contructor k tham so 
 @Getter
-@Setter
+@Setter 
 @ToString
-@Builder
+@Builder // contructor tuy y tham so 
 public class KhachHang {
+    private Integer id;
+    
+    private String maKhachHang;
+    
     private String hoTen;
-    private String SDT;
+   
+    private String ngaySinh;
+    
+    private boolean gioiTinh;
+    
+    private String email;
+    
+    private String soDienThoai;
+    
     private String diaChi;
     
+    private String ngayTao;
 }

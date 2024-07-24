@@ -962,7 +962,7 @@ public class HoaDonForm extends javax.swing.JPanel {
                 document.add(qrImage);
 
                 // Add footer
-                Paragraph footer = new Paragraph("Copyright © 2023 Bee Shoes\nAll rights reserved", boldFont);
+                Paragraph footer = new Paragraph("Copyright © 2023 ShunShine\nAll rights reserved", boldFont);
                 footer.setAlignment(Element.ALIGN_CENTER);
                 footer.setSpacingBefore(20f);
                 document.add(footer);
