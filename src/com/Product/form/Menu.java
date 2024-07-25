@@ -58,6 +58,7 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
         initComponents();
         initWebcam();     
         setLocationRelativeTo(null);
+        
     }
 
     @SuppressWarnings("unchecked")

@@ -29,6 +29,7 @@ public class ThongTinSPJFrame extends javax.swing.JFrame {
     public ThongTinSPJFrame() {
         initComponents();
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setTitle("Thông Tin Chi Tiết Sản Phẩm");
 //        this.sp = sp;
         this.loadData();
