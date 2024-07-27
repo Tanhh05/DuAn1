@@ -309,7 +309,7 @@ public class HoaDonForm extends javax.swing.JPanel {
             }
         });
 
-        cb_httt.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Tiền Mặt", "Chuyển Khoản", "Tat Ca" }));
+        cb_httt.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Tiền Mặt", "Chuyển Khoản" }));
         cb_httt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cb_htttActionPerformed(evt);
@@ -427,8 +427,8 @@ public class HoaDonForm extends javax.swing.JPanel {
                         .addGap(12, 12, 12)
                         .addComponent(txt_timTheoGia, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(txt_timTheoGiaMax, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
+                        .addComponent(txt_timTheoGiaMax, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(35, 35, 35)
                         .addComponent(jButton6)
                         .addGap(0, 26, Short.MAX_VALUE))
                     .addComponent(jScrollPane1))
@@ -446,14 +446,14 @@ public class HoaDonForm extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(QR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtSearch1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(QR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txtSearch1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(jLabel4)
@@ -468,6 +468,7 @@ public class HoaDonForm extends javax.swing.JPanel {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(54, 54, 54))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addGap(319, 319, 319)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton5)
                             .addComponent(jButton3)
@@ -792,41 +793,52 @@ public class HoaDonForm extends javax.swing.JPanel {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
         try {
-            // Get trangThai
-            Integer trangThai = cbox_hoaDon.getSelectedIndex();
-            if (trangThai == 3) { // Assuming "Tất cả" is the first item
-                trangThai = null;
-            }
-
-            // Get httt
-            Integer httt = cb_httt.getSelectedIndex();
-            if (httt == 3) { // Assuming "Tất cả" is the first item for httt
-                httt = null;
-            }
-
             // Get giaMin
             Double giaMin = null;
             String giaMinText = txt_timTheoGia.getText().trim();
             if (!giaMinText.isEmpty()) {
-                giaMin = Double.parseDouble(giaMinText);
+                try {
+                    giaMin = Double.parseDouble(giaMinText);
+                    if (giaMin < 0) {
+                        JOptionPane.showMessageDialog(null, "Giá tối thiểu không được là số âm.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                        return; // Exit the method if giaMin is negative
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số hợp lệ cho giá tối thiểu.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                    return; // Exit the method if the input is invalid
+                }
             }
 
             // Get giaMax
             Double giaMax = null;
             String giaMaxText = txt_timTheoGiaMax.getText().trim();
             if (!giaMaxText.isEmpty()) {
-                giaMax = Double.parseDouble(giaMaxText);
+                try {
+                    giaMax = Double.parseDouble(giaMaxText);
+                    if (giaMax < 0) {
+                        JOptionPane.showMessageDialog(null, "Giá tối đa không được là số âm.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                        return; // Exit the method if giaMax is negative
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập số hợp lệ cho giá tối đa.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                    return; // Exit the method if the input is invalid
+                }
+            }
+
+            // Validate giaMin and giaMax
+            if (giaMin != null && giaMax != null && giaMin > giaMax) {
+                JOptionPane.showMessageDialog(null, "Giá tối thiểu không được lớn hơn giá tối đa.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                return; // Exit the method if the validation fails
             }
 
             // Call the search method with the updated inputs
-            showDataTable(hdRepo.search(trangThai, httt, giaMin, giaMax));
+            showDataTable(hdRepo.timKiemTheoGia(giaMin, giaMax));
 
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(null, "Vui lòng nhập số hợp lệ cho phạm vi giá.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void tb_hdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_hdMouseClicked
@@ -977,16 +989,16 @@ public class HoaDonForm extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void cb_htttActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_htttActionPerformed
-//        try {
-//            // Get selected trangThai from combobox
-//            Integer httt = cb_httt.getSelectedIndex();
-//
-//            // Call the search method with trangThai
-//            showDataTable(hdRepo.hinhThucThanhToan(httt));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.", "Error", JOptionPane.ERROR_MESSAGE);
-//        }       
+        try {
+            // Get selected trangThai from combobox
+            Integer httt = cb_httt.getSelectedIndex();
+
+            // Call the search method with trangThai
+            showDataTable(hdRepo.hinhThucThanhToan(httt));
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại.", "Error", JOptionPane.ERROR_MESSAGE);
+        }       
     }//GEN-LAST:event_cb_htttActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

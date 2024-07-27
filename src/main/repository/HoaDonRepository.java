@@ -189,125 +189,124 @@ public class HoaDonRepository {
     return lists;
 }
 
-   public ArrayList<HoaDonResponse> hinhThucThanhToan(Integer httt) {
-    // Base SQL query with condition to filter by payment method
-    String sql = "SELECT "
-            + "dbo.HoaDon.id, "
-            + "dbo.HoaDon.ma_hoa_don, "
-            + "dbo.HoaDon.ngay_tao, "
-            + "dbo.HoaDon.ngay_cap_nhat, "
-            + "dbo.HoaDon.tong_tien, "
-            + "dbo.NhanVien.ma_nhan_vien, "
-            + "dbo.KhachHang.ho_ten, "
-            + "dbo.KhachHang.dia_chi, "
-            + "dbo.KhachHang.so_dien_thoai, "
-            + "dbo.HoaDon.trang_thai, "
-            + "dbo.HoaDon.hinh_thuc_thanh_toan "
-            + "FROM dbo.HoaDon "
-            + "INNER JOIN dbo.NhanVien ON dbo.HoaDon.id_nhan_vien = dbo.NhanVien.id "
-            + "INNER JOIN dbo.KhachHang ON dbo.HoaDon.id_khach_hang = dbo.KhachHang.id"; // Added condition
+    public ArrayList<HoaDonResponse> hinhThucThanhToan(Integer httt) {
+        // Base SQL query with condition to filter by payment method
+        String sql = "SELECT \n"
+                + "    dbo.HoaDon.id, \n"
+                + "    dbo.HoaDon.ma_hoa_don, \n"
+                + "    dbo.HoaDon.ngay_tao, \n"
+                + "    dbo.HoaDon.ngay_cap_nhat, \n"
+                + "    dbo.HoaDon.tong_tien, \n"
+                + "    dbo.NhanVien.ma_nhan_vien, \n"
+                + "    dbo.KhachHang.ho_ten, \n"
+                + "    dbo.KhachHang.dia_chi, \n"
+                + "    dbo.KhachHang.so_dien_thoai, \n"
+                + "    dbo.HoaDon.trang_thai, \n"
+                + "    dbo.HoaDon.hinh_thuc_thanh_toan\n"
+                + "FROM dbo.HoaDon\n"
+                + "INNER JOIN dbo.NhanVien ON dbo.HoaDon.id_nhan_vien = dbo.NhanVien.id\n"
+                + "INNER JOIN dbo.KhachHang ON dbo.HoaDon.id_khach_hang = dbo.KhachHang.id\n"
+                + "WHERE dbo.HoaDon.hinh_thuc_thanh_toan = ?;"; // Added condition
 
-    ArrayList<HoaDonResponse> lists = new ArrayList<>();
-    try (Connection con = DBConnect.getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-        // Set the parameter for the SQL query
-        ps.setInt(1, httt);
+        ArrayList<HoaDonResponse> lists = new ArrayList<>();
+        try (Connection con = DBConnect.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            // Set the parameter for the SQL query
+            ps.setInt(1, httt);
 
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                HoaDonResponse response = HoaDonResponse.builder()
-                        .id(rs.getInt("id"))
-                        .maHoaDon(rs.getString("ma_hoa_don"))
-                        .ngayTao(rs.getString("ngay_tao"))
-                        .ngayCapNhap(rs.getString("ngay_cap_nhat"))
-                        .tongTien(rs.getDouble("tong_tien"))
-                        .maNhanVien(rs.getString("ma_nhan_vien"))
-                        .hoTen(rs.getString("ho_ten"))
-                        .diaChi(rs.getString("dia_chi"))
-                        .SDT(rs.getString("so_dien_thoai"))
-                        .trangThai(rs.getInt("trang_thai"))
-                        .hinhThucTT(rs.getInt("hinh_thuc_thanh_toan"))
-                        .build();
-                lists.add(response);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    HoaDonResponse response = HoaDonResponse.builder()
+                            .id(rs.getInt("id"))
+                            .maHoaDon(rs.getString("ma_hoa_don"))
+                            .ngayTao(rs.getString("ngay_tao"))
+                            .ngayCapNhap(rs.getString("ngay_cap_nhat"))
+                            .tongTien(rs.getDouble("tong_tien"))
+                            .maNhanVien(rs.getString("ma_nhan_vien"))
+                            .hoTen(rs.getString("ho_ten"))
+                            .diaChi(rs.getString("dia_chi"))
+                            .SDT(rs.getString("so_dien_thoai"))
+                            .trangThai(rs.getInt("trang_thai"))
+                            .hinhThucTT(rs.getInt("hinh_thuc_thanh_toan"))
+                            .build();
+                    lists.add(response);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
         }
-    } catch (Exception e) {
-        e.printStackTrace(System.out);
+        return lists;
     }
-    return lists;
-}
    
-    public ArrayList<HoaDonResponse> search(Integer trangThai, Integer httt, Double giaMin, Double giaMax) {
-    String sql = "SELECT "
-            + "dbo.HoaDon.id, "
-            + "dbo.HoaDon.ma_hoa_don, "
-            + "dbo.HoaDon.ngay_tao, "
-            + "dbo.HoaDon.ngay_cap_nhat, "
-            + "dbo.HoaDon.tong_tien, "
-            + "dbo.NhanVien.ma_nhan_vien, "
-            + "dbo.KhachHang.ho_ten, "
-            + "dbo.KhachHang.dia_chi, "
-            + "dbo.KhachHang.so_dien_thoai, "
-            + "dbo.HoaDon.trang_thai, "
-            + "dbo.HoaDon.hinh_thuc_thanh_toan "
-            + "FROM dbo.HoaDon "
-            + "INNER JOIN dbo.NhanVien ON dbo.HoaDon.id_nhan_vien = dbo.NhanVien.id "
-            + "INNER JOIN dbo.KhachHang ON dbo.HoaDon.id_khach_hang = dbo.KhachHang.id "
-            + "WHERE 1=1"; // Start with a dummy condition that will always be true
-
-    // Append conditions for mandatory parameters
-    sql += " AND dbo.HoaDon.tong_tien BETWEEN ? AND ?";
-
-    // Append conditions for optional parameters
-    if (trangThai != null) {
-        sql += " AND CAST(dbo.HoaDon.trang_thai AS VARCHAR) LIKE ?";
-    }
-    if (httt != null) {
-        sql += " AND CAST(dbo.HoaDon.hinh_thuc_thanh_toan AS VARCHAR) LIKE ?";
-    }
-
-    ArrayList<HoaDonResponse> lists = new ArrayList<>();
-    try (Connection con = DBConnect.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)) {
-        int index = 1; // Start index for setting parameters
-
-        // Set mandatory parameters
-        ps.setDouble(index++, giaMin != null ? giaMin : 0.0); // Set a default value or handle differently if needed
-        ps.setDouble(index++, giaMax != null ? giaMax : Double.MAX_VALUE); // Set a default value or handle differently if needed
-
-        // Set optional parameters based on conditions
-        if (trangThai != null) {
-            ps.setString(index++, "%" + trangThai.toString() + "%");
-        }
-        if (httt != null) {
-            ps.setString(index++, "%" + httt.toString() + "%");
-        }
-
-        // Execute query and process results
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                HoaDonResponse response = new HoaDonResponse();
-                response.setId(rs.getInt("id"));
-                response.setMaHoaDon(rs.getString("ma_hoa_don"));
-                response.setNgayTao(rs.getString("ngay_tao"));
-                response.setNgayCapNhap(rs.getString("ngay_cap_nhat"));
-                response.setTongTien(rs.getDouble("tong_tien"));
-                response.setMaNhanVien(rs.getString("ma_nhan_vien"));
-                response.setHoTen(rs.getString("ho_ten"));
-                response.setDiaChi(rs.getString("dia_chi"));
-                response.setSDT(rs.getString("so_dien_thoai"));
-                response.setTrangThai(rs.getInt("trang_thai"));
-                response.setHinhThucTT(rs.getInt("hinh_thuc_thanh_toan"));
-                lists.add(response);
-            }
-        }
-    } catch (Exception e) {
-        e.printStackTrace(); // Handle SQL exception
-    }
-    return lists;
-}
-
-
+//    public ArrayList<HoaDonResponse> search(Integer trangThai, Integer httt, Double giaMin, Double giaMax) {
+//        String sql = "SELECT "
+//                + "dbo.HoaDon.id, "
+//                + "dbo.HoaDon.ma_hoa_don, "
+//                + "dbo.HoaDon.ngay_tao, "
+//                + "dbo.HoaDon.ngay_cap_nhat, "
+//                + "dbo.HoaDon.tong_tien, "
+//                + "dbo.NhanVien.ma_nhan_vien, "
+//                + "dbo.KhachHang.ho_ten, "
+//                + "dbo.KhachHang.dia_chi, "
+//                + "dbo.KhachHang.so_dien_thoai, "
+//                + "dbo.HoaDon.trang_thai, "
+//                + "dbo.HoaDon.hinh_thuc_thanh_toan "
+//                + "FROM dbo.HoaDon "
+//                + "INNER JOIN dbo.NhanVien ON dbo.HoaDon.id_nhan_vien = dbo.NhanVien.id "
+//                + "INNER JOIN dbo.KhachHang ON dbo.HoaDon.id_khach_hang = dbo.KhachHang.id "
+//                + "WHERE 1=1"; // Start with a dummy condition that will always be true
+//
+//        // Append conditions for mandatory parameters
+//        sql += " AND dbo.HoaDon.tong_tien BETWEEN ? AND ?";
+//
+//        // Append conditions for optional parameters
+//        if (trangThai != null) {
+//            sql += " AND CAST(dbo.HoaDon.trang_thai AS VARCHAR) LIKE ?";
+//        }
+//        if (httt != null) {
+//            sql += " AND CAST(dbo.HoaDon.hinh_thuc_thanh_toan AS VARCHAR) LIKE ?";
+//        }
+//
+//        ArrayList<HoaDonResponse> lists = new ArrayList<>();
+//        try (Connection con = DBConnect.getConnection();
+//                PreparedStatement ps = con.prepareStatement(sql)) {
+//            int index = 1; // Start index for setting parameters
+//
+//            // Set mandatory parameters
+//            ps.setDouble(index++, giaMin != null ? giaMin : 0.0); // Set a default value or handle differently if needed
+//            ps.setDouble(index++, giaMax != null ? giaMax : Double.MAX_VALUE); // Set a default value or handle differently if needed
+//
+//            // Set optional parameters based on conditions
+//            if (trangThai != null) {
+//                ps.setString(index++, "%" + trangThai.toString() + "%");
+//            }
+//            if (httt != null) {
+//                ps.setString(index++, "%" + httt.toString() + "%");
+//            }
+//
+//            // Execute query and process results
+//            try (ResultSet rs = ps.executeQuery()) {
+//                while (rs.next()) {
+//                    HoaDonResponse response = new HoaDonResponse();
+//                    response.setId(rs.getInt("id"));
+//                    response.setMaHoaDon(rs.getString("ma_hoa_don"));
+//                    response.setNgayTao(rs.getString("ngay_tao"));
+//                    response.setNgayCapNhap(rs.getString("ngay_cap_nhat"));
+//                    response.setTongTien(rs.getDouble("tong_tien"));
+//                    response.setMaNhanVien(rs.getString("ma_nhan_vien"));
+//                    response.setHoTen(rs.getString("ho_ten"));
+//                    response.setDiaChi(rs.getString("dia_chi"));
+//                    response.setSDT(rs.getString("so_dien_thoai"));
+//                    response.setTrangThai(rs.getInt("trang_thai"));
+//                    response.setHinhThucTT(rs.getInt("hinh_thuc_thanh_toan"));
+//                    lists.add(response);
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace(); // Handle SQL exception
+//        }
+//        return lists;
+//    }
 
     public ArrayList<HoaDonResponse> searchh(String maHoaDon) {
         String sql = "SELECT dbo.HoaDon.id, dbo.HoaDon.ma_hoa_don, dbo.HoaDon.ngay_tao, dbo.HoaDon.ngay_cap_nhat, dbo.HoaDon.tong_tien, dbo.NhanVien.ma_nhan_vien, dbo.KhachHang.ho_ten, dbo.KhachHang.dia_chi, dbo.KhachHang.so_dien_thoai, dbo.HoaDon.trang_thai, \n"
@@ -404,59 +403,77 @@ public class HoaDonRepository {
 }
 
     public ArrayList<HoaDonResponse> timKiemTheoGia(Double giaMin, Double giaMax) {
-    String sql = "SELECT "
-            + "dbo.HoaDon.id, "
-            + "dbo.HoaDon.ma_hoa_don, "
-            + "dbo.HoaDon.ngay_tao, "
-            + "dbo.HoaDon.ngay_cap_nhat, "
-            + "dbo.HoaDon.tong_tien, "
-            + "dbo.NhanVien.ma_nhan_vien, "
-            + "dbo.KhachHang.ho_ten, "
-            + "dbo.KhachHang.dia_chi, "
-            + "dbo.KhachHang.so_dien_thoai, "
-            + "dbo.HoaDon.trang_thai, "
-            + "dbo.HoaDon.hinh_thuc_thanh_toan "
-            + "FROM dbo.HoaDon "
-            + "INNER JOIN dbo.NhanVien ON dbo.HoaDon.id_nhan_vien = dbo.NhanVien.id "
-            + "INNER JOIN dbo.KhachHang ON dbo.HoaDon.id_khach_hang = dbo.KhachHang.id "
-            + "WHERE dbo.HoaDon.tong_tien BETWEEN ? AND ?"; // Filter by price range
+        String sql = "SELECT "
+                + "dbo.HoaDon.id, "
+                + "dbo.HoaDon.ma_hoa_don, "
+                + "dbo.HoaDon.ngay_tao, "
+                + "dbo.HoaDon.ngay_cap_nhat, "
+                + "dbo.HoaDon.tong_tien, "
+                + "dbo.NhanVien.ma_nhan_vien, "
+                + "dbo.KhachHang.ho_ten, "
+                + "dbo.KhachHang.dia_chi, "
+                + "dbo.KhachHang.so_dien_thoai, "
+                + "dbo.HoaDon.trang_thai, "
+                + "dbo.HoaDon.hinh_thuc_thanh_toan "
+                + "FROM dbo.HoaDon "
+                + "INNER JOIN dbo.NhanVien ON dbo.HoaDon.id_nhan_vien = dbo.NhanVien.id "
+                + "INNER JOIN dbo.KhachHang ON dbo.HoaDon.id_khach_hang = dbo.KhachHang.id "
+                + "WHERE dbo.HoaDon.tong_tien BETWEEN ? AND ?"; // Filter by price range
 
-    ArrayList<HoaDonResponse> lists = new ArrayList<>();
-    try (Connection con = DBConnect.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)) {
-        int index = 1; // Start index for setting parameters
+        ArrayList<HoaDonResponse> lists = new ArrayList<>();
+        try (Connection con = DBConnect.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            int index = 1; // Start index for setting parameters
 
-        // Set mandatory parameters
-        ps.setDouble(index++, giaMin != null ? giaMin : 0.0); // Set a default value or handle differently if needed
-        ps.setDouble(index++, giaMax != null ? giaMax : Double.MAX_VALUE); // Set a default value or handle differently if needed
+            // Set mandatory parameters
+            ps.setDouble(index++, giaMin != null ? giaMin : 0.0); // Set a default value or handle differently if needed
+            ps.setDouble(index++, giaMax != null ? giaMax : Double.MAX_VALUE); // Set a default value or handle differently if needed
 
-        // Execute query and process results
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                HoaDonResponse response = new HoaDonResponse();
-                response.setId(rs.getInt("id"));
-                response.setMaHoaDon(rs.getString("ma_hoa_don"));
-                response.setNgayTao(rs.getString("ngay_tao"));
-                response.setNgayCapNhap(rs.getString("ngay_cap_nhat"));
-                response.setTongTien(rs.getDouble("tong_tien"));
-                response.setMaNhanVien(rs.getString("ma_nhan_vien"));
-                response.setHoTen(rs.getString("ho_ten"));
-                response.setDiaChi(rs.getString("dia_chi"));
-                response.setSDT(rs.getString("so_dien_thoai"));
-                response.setTrangThai(rs.getInt("trang_thai"));
-                response.setHinhThucTT(rs.getInt("hinh_thuc_thanh_toan"));
-                lists.add(response);
+            // Execute query and process results
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    HoaDonResponse response = new HoaDonResponse();
+                    response.setId(rs.getInt("id"));
+                    response.setMaHoaDon(rs.getString("ma_hoa_don"));
+                    response.setNgayTao(rs.getString("ngay_tao"));
+                    response.setNgayCapNhap(rs.getString("ngay_cap_nhat"));
+                    response.setTongTien(rs.getDouble("tong_tien"));
+                    response.setMaNhanVien(rs.getString("ma_nhan_vien"));
+                    response.setHoTen(rs.getString("ho_ten"));
+                    response.setDiaChi(rs.getString("dia_chi"));
+                    response.setSDT(rs.getString("so_dien_thoai"));
+                    response.setTrangThai(rs.getInt("trang_thai"));
+                    response.setHinhThucTT(rs.getInt("hinh_thuc_thanh_toan"));
+                    lists.add(response);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace(); // Handle SQL exception
         }
-    } catch (Exception e) {
-        e.printStackTrace(); // Handle SQL exception
+        return lists;
     }
-    return lists;
-}
 
+    
+    public boolean add(HoaDon hoaDon) {
 
-//    public HoaDonResponse getAll(String invoiceId) {
-//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-//    }
+        int check = 0;
 
+        String sql = "";
+        try (Connection con = DBConnect.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            // Object la cha cua cac loai kieu du lieu 
+            ps.setObject(1, hoaDon.getKhachHangID());
+            ps.setObject(2, hoaDon.getNhanVienID()); // Nhan vien lay tu login
+            ps.setObject(3, hoaDon.getMaHoaDon());
+            ps.setObject(4, new Date());
+            ps.setObject(5, 0);
+            ps.setObject(6, 0);
+
+            check = ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
+
+        return check > 0;
+    }
+    
 }

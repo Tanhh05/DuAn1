@@ -111,6 +111,8 @@ public class Menu extends javax.swing.JFrame implements Runnable, ThreadFactory 
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        
+        
         //</editor-fold>
 
         //</editor-fold>
